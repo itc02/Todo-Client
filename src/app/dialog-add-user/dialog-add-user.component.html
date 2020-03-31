@@ -1,0 +1,16 @@
+<div mat-dialog-content>
+  <h1>Add user</h1>
+</div>
+<mat-form-field>
+  <mat-label>
+      New user
+  </mat-label>
+  <input matInput #name maxlength="15" [(ngModel)]="user">
+  <mat-hint align="end">
+      Current length {{name.value.length}} / 15
+  </mat-hint>
+</mat-form-field>
+<div mat-dialog-actions>
+  <button mat-raised-button color="warn" (click)="cancel()" class="cancel" [mat-dialog-close]>Cancel</button>
+  <button mat-raised-button class="ok" (click)="add()" [disabled]="!isUsernameValid()">Add</button>
+</div>

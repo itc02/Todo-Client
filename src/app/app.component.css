@@ -1,0 +1,26 @@
+main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+app-main-table {
+    width: 70%
+}
+
+.date {
+    width: 15%;
+    background-image: url("../assets/clock.png");
+    background-size: 80%;
+    background-repeat: no-repeat;
+    background-position: center;
+    height: 250px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+.dateComponent {
+    text-align: center;
+    width: 100%;
+    font-weight: bold;
+}

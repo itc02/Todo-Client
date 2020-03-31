@@ -1,0 +1,26 @@
+mat-form-field {
+    width: 100%;
+}
+
+h1 {
+    text-align: center;
+}
+  
+.mat-dialog-actions {
+    float: right;
+}
+
+.cancel, .delete {
+    width: 80px;
+}
+
+.delete{
+    background-color: #28a745;
+    color: white;
+}
+
+table {
+    width: 100%;
+    margin: 0 !important;
+    padding: 0 !important;
+}
