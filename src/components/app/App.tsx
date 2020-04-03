@@ -5,7 +5,7 @@ import './App.css';
 const App: React.FC = () => {
   return (
    <MainTable />
-  )
+  );
 }
 
 export default App;
