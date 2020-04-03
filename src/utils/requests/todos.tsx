@@ -11,27 +11,18 @@ interface Data {
   user_name: string
 }
 
-interface Response {
-  data: Array<Data>;
-  status: number;
-  statusText: string;
-  headers: any;
-  config: any;
-  request: XMLHttpRequest;
-}
-
-
 export const GetTodos = () => {
-  const [ todos, setTodos ] = useState<any>([]);
+  const [ todos, setTodos ] = useState<Data[]>([]);
 
-  const fetchData = async () => {
-    const res = await axios.get<Response>('http://localhost:3000/todos');
-    setTodos(res.data);
+  const fetchData = () => {
+    axios.get<Data[]>('http://localhost:3000/todos')
+    .then(res => { setTodos(res.data) })
+    .catch(err => console.log(err));
   }
 
   useEffect(() => {
     fetchData();
-  }, [])
+  }, []);
 
   return todos;
 }
