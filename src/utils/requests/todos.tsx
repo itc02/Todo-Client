@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
-export interface Data {
+export interface TodosData {
   id: number;
   title: string;
   description: string;
@@ -12,11 +12,15 @@ export interface Data {
 }
 
 export const GetTodos = () => {
-  const [ todos, setTodos ] = useState<Data[]>([]);
-
+  const [ todos, setTodos ] = useState<TodosData[]>([]);
+  const [ loading, setLoading ] = useState(false);
+  
   const fetchData = () => {
-    axios.get<Data[]>('http://localhost:3000/todos')
-    .then(res => { setTodos(res.data) })
+    axios.get<TodosData[]>('http://localhost:3000/todos')
+    .then(res => { 
+      setTodos(res.data);
+      setLoading(true);
+    })
     .catch(err => console.log(err));
   }
 
@@ -24,5 +28,17 @@ export const GetTodos = () => {
     fetchData();
   }, []);
 
-  return todos;
+  return { allTodos: todos, loading };
+}
+
+interface PostData {
+  title: string;
+  deadline: Date | null;
+  assigned_to: number;
+  description: string
+}
+
+export const AddTodo = ({title, deadline, assigned_to, description}: PostData) => {
+  axios.post<TodosData[]>('http://localhost:3000/todos', { title, deadline, assigned_to, description })
+  .catch(err => console.log(err));
 }
