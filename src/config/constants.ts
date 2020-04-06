@@ -1,4 +1,10 @@
-export const columns: string[] = ['Title', 'State', 'Assigned to', 'End date'];
+export const columns = ['Title', 'State', 'Assigned to', 'End date'];
+
+export const routes = {
+  server: 'http://localhost:3000',
+  todos: 'todos',
+  users: 'users'
+}
 
 export const labels = {
   title: 'New title',

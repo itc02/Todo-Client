@@ -1,3 +1,4 @@
+import { routes } from '../../config/constants';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -10,7 +11,7 @@ export const GetUsers = () => {
   const [ users, setUsers ] = useState<UsersData[]>([]);
 
   const fetchData = () => {
-    axios.get<UsersData[]>('http://localhost:3000/users')
+    axios.get<UsersData[]>(`${routes.server}/${routes.users}`)
     .then(res => { setUsers(res.data) })
     .catch(err => console.log(err));
   }
