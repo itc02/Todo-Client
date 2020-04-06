@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
-interface Data {
+export interface Data {
   id: number;
   title: string;
   description: string;
