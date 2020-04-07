@@ -1,8 +1,9 @@
 
 import React, { useState, useEffect} from 'react';
 import { UsersData, GetUsers } from '../../../utils/requests/users';
-import { addTodo } from '../../../utils/requests/todos';
-import { labels, textFields } from '../../../config/constants';
+import { TodosData } from '../../../utils/requests/todos';
+import axios from 'axios';
+import { labels, textFields, routes } from '../../../config/constants';
 import { DialogTitle, Transition, StyledFormControl } from './styles';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -19,6 +20,13 @@ import DateFnsUtils from '@date-io/date-fns';
 interface Props {
 	open: boolean;
 	closeDialog: any;
+}
+
+interface PostData {
+  title: string;
+  deadline: Date | null;
+  assigned_to: number;
+  description: string
 }
 
 export const AddTodoDialog = ({ open, closeDialog }: Props) => {
@@ -70,6 +78,12 @@ export const AddTodoDialog = ({ open, closeDialog }: Props) => {
 			addTodo(data);
 			closeDialog();
 		}
+	}
+
+	const addTodo = ({title, deadline, assigned_to, description}: PostData) => {
+		axios.post<TodosData[]>(`${routes.server}/${routes.todos}`, { title, deadline, assigned_to, description })
+		.then(() => {window.location.href='/'})
+		.catch(err => console.log(err));
 	}
 
 	useEffect(() => {

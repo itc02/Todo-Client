@@ -32,3 +32,8 @@ export const textFields = {
     rows: 8
   }
 }
+
+export const pagination = {
+  rowsOnPage: [5, 10, 20],
+  rowHeight: 53
+}

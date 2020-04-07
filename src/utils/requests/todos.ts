@@ -13,7 +13,7 @@ export interface TodosData {
 }
 
 // Lowercase
-export const GetTodos = () => {
+export const useTodos = () => {
   const [todos, setTodos] = useState<TodosData[]>([]);
 
   const fetchData = () => {
@@ -27,16 +27,4 @@ export const GetTodos = () => {
   }, []);
 
   return todos;
-}
-
-interface PostData {
-  title: string;
-  deadline: Date | null;
-  assigned_to: number;
-  description: string
-}
-
-export const addTodo = ({title, deadline, assigned_to, description}: PostData) => {
-  return axios.post<TodosData[]>(`${routes.server}/${routes.todos}`, { title, deadline, assigned_to, description })
-  .catch(err => console.log(err));
 }
