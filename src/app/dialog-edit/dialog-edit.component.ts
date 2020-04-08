@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { angularComponent, dialog } from '../../config/constants';
 import { HttpClient } from '@angular/common/http';
 import { routes, verification } from '../../config/constants';
@@ -33,9 +33,7 @@ export class DialogEditComponent {
     public dialogRef: MatDialogRef<DialogEditComponent>, // To make this component dialog
     @Inject(MAT_DIALOG_DATA) public data: Todo, // To take data from where this dialog called
     private http: HttpClient // To make HTTP requests
-  ) {
-    console.log(this.data.deadline.split(' ')[0].split('-').join('/'))
-  }
+  ) { }
 
   states = ['new', 'in progress', 'finished'];
   users: any;
@@ -50,7 +48,6 @@ export class DialogEditComponent {
 //************************************************** Main methods ******************************************
   ngOnInit(): void {
     this.getUsers();
-    console.log(this.data.state, '55')
   }
 
   getUsers(): void {
@@ -61,8 +58,7 @@ export class DialogEditComponent {
         map(value => typeof value === 'string' ? value : value.user_name),
         map(name => name ? this._filter(name) : this.users.slice())
       );
-      this.control.setValue({user_name: this.data.assignTo === dialog.editUsers.deletedUserSign ? '' : this.data.assignTo})
-      console.log(this.users)
+      this.control.setValue({user_name: this.data.assignTo === dialog.editUsers.deletedUserSign ? '' : this.data.assignTo});
     });
   }
 
@@ -75,7 +71,7 @@ export class DialogEditComponent {
       this.isDeadlineValid() &&
       this.isUsernameValid() &&
       this.isDescriptionValid()
-    )
+    );
   }
 
   isTitleValid(): boolean {
@@ -107,7 +103,7 @@ export class DialogEditComponent {
         break;
       }
     }
-    this.control.setValue({user_name: user, id})
+    this.control.setValue({user_name: user, id});
   }
 
   _filter(name: string): User[] {
@@ -124,5 +120,4 @@ export class DialogEditComponent {
   cancel(): void {
     this.dialogRef.close();
   }
-
 }

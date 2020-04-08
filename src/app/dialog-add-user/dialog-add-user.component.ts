@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog'
+import { MatDialogRef } from '@angular/material/dialog';
 import { angularComponent, routes, snack } from '../../config/constants';
 import { HttpClient } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -21,7 +21,7 @@ export class DialogAddUserComponent implements OnInit {
 
 //********************************************************** Main methods *****************************************
   ngOnInit(): void{
-    this.getUsers()
+    this.getUsers();
   }
 
   add(): void {
@@ -55,7 +55,7 @@ export class DialogAddUserComponent implements OnInit {
     this.http.get(`${routes.serverURL}/${routes.users}`).subscribe(allUsers => {
       // @ts-ignore
       this.users = allUsers.map(user => user.user_name);
-    })
+    });
   }
 //******************************************** Methods to interact with server through HTTP ***********************************
 

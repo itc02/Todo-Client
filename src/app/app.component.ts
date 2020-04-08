@@ -8,15 +8,4 @@ import * as moment from 'moment';
   styleUrls: angularComponent.styleUrls.app
 })
 
-export class AppComponent {
-  day = moment().format('dddd, YYYY-MM-DD');
-  time = moment().format('hh:mm:ss a');
-
-  constructor() {
-    setInterval(() => {
-      this.day = moment().format('dddd, YYYY-MM-DD');
-      this.time = moment().format('hh:mm:ss a');
-
-    }, 1000);
-  }
-}
+export class AppComponent { }

@@ -11,6 +11,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   templateUrl: angularComponent.templateUrl.dialogShowUsers,
   styleUrls: angularComponent.styleUrls.dialogShowUsers
 })
+
 export class DialogShowUsersComponent implements OnInit {
 
   constructor(
@@ -18,11 +19,11 @@ export class DialogShowUsersComponent implements OnInit {
     public dialogRef: MatDialogRef<DialogShowUsersComponent>, // To make this component dialog
     private snackBar: MatSnackBar // To inform about some processes in the application
   ) { }
-  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
   users: any = [];
   owners: any;
-  selection = new SelectionModel(true, [])
+  selection = new SelectionModel(true, []);
   columns = ['select', 'name'];
 
 //******************************************************* Main methods **********************************************
@@ -34,8 +35,7 @@ export class DialogShowUsersComponent implements OnInit {
     });
     this.http.get(`${routes.serverURL}/${routes.getOwners}`).subscribe(owners => {
       this.owners = owners;
-      console.log(this.owners, 5555)
-    })
+    });
   }
 
   delete() {
@@ -59,7 +59,7 @@ export class DialogShowUsersComponent implements OnInit {
   }
 
   isUserSelected(): boolean {
-    return this.selection.selected.length > 0
+    return this.selection.selected.length > 0;
   }
 //*************************************************** End of main methods ********************************************
 

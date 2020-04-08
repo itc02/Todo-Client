@@ -185,7 +185,6 @@ export class MainTableComponent implements OnInit {
   addTodo(title: string, description: string, name, deadline: any): void {
     deadline = moment(deadline);
     deadline.set({D: deadline.day + 1, h: moment().format('h'), m: moment().format('m'), s: moment().format('s')});
-    console.log(name)
     this.http.post(`${routes.serverURL}/${routes.todos}`, {
       title,
       description,
@@ -198,8 +197,6 @@ export class MainTableComponent implements OnInit {
 
   editData(result: any): void {
     const todo = this.todos.filteredData[this.editIndexId];
-    console.log(todo)
-    console.log(4444)
     result.deadline = moment(result.deadline);
     result.deadline.set({D: result.deadline.day + 1, h: moment().format('h'), m: moment().format('m'), s: moment().format('s')});
     this.http.put(`${routes.serverURL}/${routes.todos}/${todo.id}`, {
