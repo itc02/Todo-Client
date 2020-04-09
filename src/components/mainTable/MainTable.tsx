@@ -16,7 +16,7 @@ import TablePagination from '@material-ui/core/TablePagination';
 import { TablePaginationActions } from '../pagination/TablePaginationActions';
 import moment from 'moment';
 
-export const MainTable = () => {
+export const MainTable:React.FC = () => {
   const todos = useTodos();
   const [ openAddDialog, setOpenAddDialog ] = useState(false);
 
@@ -35,6 +35,7 @@ export const MainTable = () => {
   };
   
   return (
+    // FE table pagination -> https://codesandbox.io/s/x52qj?file=/demo.tsx
     <TableContainer component={Paper}>
       <Options>
         <Title>Todos</Title>

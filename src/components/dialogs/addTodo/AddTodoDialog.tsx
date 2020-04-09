@@ -1,5 +1,5 @@
 import React, { useState, useEffect} from 'react';
-import { UsersData, GetUsers } from '../../../utils/requests/users';
+import { UsersData, useUsers } from '../../../utils/requests/users';
 import { TodosData } from '../../../utils/requests/todos';
 import axios from 'axios';
 import { labels, textFields, routes } from '../../../config/constants';
@@ -21,16 +21,16 @@ interface Props {
   closeDialog: any;
 }
 
-interface PostData {
+interface MainData {
   title: string;
   deadline: Date | null;
   assigned_to: number;
   description: string
 }
 
-export const AddTodoDialog = ({ open, closeDialog }: Props) => {
+export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog }: Props) => {
   const [ isOpen, setOpen ] = useState(open);
-  const users: UsersData[] = GetUsers();
+  const users: UsersData[] = useUsers();
   const [ title, setTitle ] = useState<string>('');
   const [ assignedTo, setAssignedTo ] = useState<string>('');
   const [ deadline, setDeadline ] = useState<Date | null>(null);
@@ -69,7 +69,7 @@ export const AddTodoDialog = ({ open, closeDialog }: Props) => {
   }
 
   const confirm = () => {
-    const data = {title, deadline, assigned_to: parseInt(assignedTo), description}
+    const data = { title, deadline, assigned_to: parseInt(assignedTo), description };
     if (isDataValid()) {
       clear();
       addTodo(data);
@@ -77,11 +77,21 @@ export const AddTodoDialog = ({ open, closeDialog }: Props) => {
     }
   }
 
-  const addTodo = ({title, deadline, assigned_to, description}: PostData) => {
-    axios.post<TodosData[]>(`${routes.server}/${routes.todos}`, { title, deadline, assigned_to, description })
-    .then(() => {window.location.href='/'})
+  const addTodo = (data: MainData) => {
+    axios.post<TodosData[]>(`${routes.server}/${routes.todos}`, data)
+    .then(() => { window.location.href='/' })
     .catch(err => console.log(err));
   }
+
+  const usersId = () => [''].concat(users.map(user => user.id.toString()));
+
+  const getOptionLabel = (option: any) => {
+    const user = users.find(user => user.id.toString() === option);
+    return option && user ? user.user_name : '';
+  }
+
+  const renderInput = (params: any) => <TextField {...params} label={labels.assignTo} value='' variant='outlined'/>;
+  
 
   useEffect(() => {
     setOpen(open);
@@ -97,68 +107,59 @@ export const AddTodoDialog = ({ open, closeDialog }: Props) => {
     >
       <DialogTitle>Add todo</DialogTitle>
       <DialogContent>
+        <StyledFormControl fullWidth>
+          <TextField
+            value={title}
+            label={labels.title}
+            variant='outlined'
+            fullWidth
+            inputProps={{ maxLength: textFields.title.maxLength }}
+            onChange={handleTitle}
+          ></TextField>
+          <FormHelperText>Symbols: {title.length}/{textFields.title.maxLength}</FormHelperText>
+        </StyledFormControl>
 
-      <StyledFormControl fullWidth>
-        <TextField
-          value={title}
-          label={labels.title}
-          variant='outlined'
-          fullWidth
-          inputProps={{ maxLength: textFields.title.maxLength }}
-          onChange={handleTitle}
-        ></TextField>
-        <FormHelperText>Symbols: {title.length}/{textFields.title.maxLength}</FormHelperText>
-      </StyledFormControl>
+        <FormControl fullWidth>
+          <MuiPickersUtilsProvider utils={DateFnsUtils}>
+            <KeyboardDatePicker
+              disableToolbar
+              inputVariant='outlined'
+              variant='inline'
+              format='MM/dd/yyyy'
+              margin='normal'
+              label={labels.deadline}
+              value={deadline}
+              onChange={handleDeadline}
+              KeyboardButtonProps={{ 'aria-label': 'change date' }}
+            />
+          </MuiPickersUtilsProvider>
+        </FormControl>
 
-      <FormControl fullWidth>
-        <MuiPickersUtilsProvider utils={DateFnsUtils}>
-          <KeyboardDatePicker
-            disableToolbar
-            inputVariant='outlined'
-            variant='inline'
-            format='MM/dd/yyyy'
-            margin='normal'
-            label={labels.deadline}
-            value={deadline}
-            onChange={handleDeadline}
-            KeyboardButtonProps={{
-            'aria-label': 'change date',
-            }}
+        <StyledFormControl fullWidth>
+          <Autocomplete
+            value={assignedTo}
+            options={usersId()}
+            onChange={handleAssignedTo}
+            getOptionLabel={getOptionLabel}
+            renderInput={renderInput}
           />
-        </MuiPickersUtilsProvider>
-      </FormControl>
+        </StyledFormControl>
 
-      <StyledFormControl fullWidth>
-        <Autocomplete
-          value={assignedTo}
-          options={[''].concat(users.map(user => user.id.toString()))}
-          onChange={handleAssignedTo}
-          getOptionLabel={option => {
-            const user = users.find(user => user.id.toString() === option);
-            return option && user ? user.user_name : '';
-          }}
-          renderInput={(params: any) => {
-            return <TextField {...params} label={labels.assignTo} value='' variant='outlined'/>
-          }}
-        />
-      </StyledFormControl>
-
-      <StyledFormControl fullWidth>
-        <TextField
-          value={description}
-          variant='outlined'
-          label={labels.description}
-          fullWidth
-          multiline
-          rows={textFields.description.rows}
-          onChange={handleDescription}
-          inputProps={{ maxLength: textFields.description.maxLength}}
-        ></TextField>
-        <FormHelperText>Symbols: {description.length}/{textFields.description.maxLength}</FormHelperText>
-      </StyledFormControl>
-
+        <StyledFormControl fullWidth>
+          <TextField
+            value={description}
+            variant='outlined'
+            label={labels.description}
+            fullWidth
+            multiline
+            rows={textFields.description.rows}
+            onChange={handleDescription}
+            inputProps={{ maxLength: textFields.description.maxLength}}
+          ></TextField>
+          <FormHelperText>Symbols: {description.length}/{textFields.description.maxLength}</FormHelperText>
+        </StyledFormControl>
       </DialogContent>
-        <DialogActions>
+      <DialogActions>
         <Button onClick={close} variant='contained' color='secondary'>
           Cancel
         </Button>

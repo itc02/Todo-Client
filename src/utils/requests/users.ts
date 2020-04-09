@@ -7,7 +7,7 @@ export interface UsersData {
   user_name: string;
 }
 
-export const GetUsers = () => {
+export const useUsers = () => {
   const [ users, setUsers ] = useState<UsersData[]>([]);
 
   const fetchData = () => {

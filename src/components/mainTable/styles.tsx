@@ -19,5 +19,5 @@ export const Border = styled.hr`
 `;
 
 export const StyledTableCell = styled(TableCell)`
-  text-transform: capitalize
+  text-transform: capitalize;
 `;
