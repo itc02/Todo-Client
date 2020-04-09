@@ -12,7 +12,6 @@ export interface TodosData {
   user_name: string
 }
 
-// Lowercase
 export const useTodos = () => {
   const [todos, setTodos] = useState<TodosData[]>([]);
 
