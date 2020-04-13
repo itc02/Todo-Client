@@ -15,18 +15,21 @@ import { columns, dateFormats, pagination } from '../../config/constants';
 import Pagination from '@material-ui/lab/Pagination';
 import { StyledPagination } from './styles';
 import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
 import {routes} from '../../config/constants';
+import Checkbox from '@material-ui/core/Checkbox';
+import MenuItem from '@material-ui/core/MenuItem';
 import axios from 'axios';
 import moment from 'moment';
 
 export const MainTable:React.FC = () => {
   const [ openAddDialog, setOpenAddDialog ] = useState(false);
 
-  const [ todos, setTodos ] = useState([]);
-  const [ currentPer, setPer ] = useState(5);
-  const [ currentPage, setPage ] = useState(1);
-  const [ allTodosCount, setAllTodosCount ] = useState(0);
+  const [ todos, setTodos ] = useState<TodosData[]>([]);
+  const [ currentPer, setPer ] = useState<number>(5);
+  const [ currentPage, setPage ] = useState<number>(1);
+  const [ allTodosCount, setAllTodosCount ] = useState<number>(0);
+
+  const [ chosenTodos, setChosenTodos ] = useState<number[]>([]);
 
   const getTodos = (newPer: number, newPage: number) => {
     axios.get(`${routes.server}/${routes.todos}`, {
@@ -60,6 +63,22 @@ export const MainTable:React.FC = () => {
     return todos.length === 0 ? 1 : Math.ceil(allTodosCount / currentPer);
   }
 
+  const changeCheckboxState = (event: any) => {
+    const id = parseInt(event.target.value);
+    if(chosenTodos.includes(id)) {
+      setChosenTodos(chosenTodos.filter(todoId => todoId !== id));
+    } else {
+      setChosenTodos([...chosenTodos, id]);
+    }
+  }
+
+  const deleteTodos = () => {
+    axios.delete(`${routes.server}/${routes.todos}/${chosenTodos}`).then(res => {
+      setTodos(res.data);
+      setChosenTodos([]);
+    });
+  }
+
   useEffect(() => {
     getTodos(currentPer, currentPage);
     axios.get(`${routes.server}/${routes.todos}/count`).then(res => {
@@ -86,6 +105,14 @@ export const MainTable:React.FC = () => {
           {todos.map((todo: TodosData) => {
             return (
               <TableRow key={ todo.id }>
+                <TableCell style={{width: '1px'}}>
+                  <Checkbox
+                    color='primary'
+                    checked={chosenTodos.includes(todo.id)}
+                    onChange={changeCheckboxState}
+                    value={todo.id}
+                  />
+                </TableCell>
                 <TableCell>{ todo.title }</TableCell>
                 <StyledTableCell>{ todo.state }</StyledTableCell>
                 <TableCell>{ todo.user_name }</TableCell>
@@ -96,6 +123,15 @@ export const MainTable:React.FC = () => {
         </TableBody>
         <TableFooter>
           <TableRow>
+            <TableCell>
+              <Button
+                variant='outlined'
+                disabled={chosenTodos.length === 0}
+                onClick={deleteTodos}
+              >
+                Delete
+              </Button>
+            </TableCell>
             <TableCell colSpan={4}>
               <StyledPagination>
                 <Select

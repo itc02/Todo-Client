@@ -1,4 +1,4 @@
-export const columns = ['Title', 'State', 'Assigned to', 'End date'];
+export const columns = ['', 'Title', 'State', 'Assigned to', 'End date'];
 
 export const routes = {
   server: 'http://localhost:3000',
