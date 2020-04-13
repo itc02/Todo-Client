@@ -21,3 +21,8 @@ export const Border = styled.hr`
 export const StyledTableCell = styled(TableCell)`
   text-transform: capitalize;
 `;
+
+export const StyledPagination = styled.div`
+  display: flex;
+  justify-content: flex-end;
+`;

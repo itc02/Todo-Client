@@ -18,7 +18,8 @@ import DateFnsUtils from '@date-io/date-fns';
 
 interface Props {
   open: boolean;
-  closeDialog: any;
+  closeDialog: () => void;
+  createTodo: (data: MainData) => void
 }
 
 interface MainData {
@@ -28,9 +29,10 @@ interface MainData {
   description: string
 }
 
-export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog }: Props) => {
+export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog, createTodo }: Props) => {
   const [ isOpen, setOpen ] = useState(open);
   const users: UsersData[] = useUsers();
+
   const [ title, setTitle ] = useState<string>('');
   const [ assignedTo, setAssignedTo ] = useState<string>('');
   const [ deadline, setDeadline ] = useState<Date | null>(null);
