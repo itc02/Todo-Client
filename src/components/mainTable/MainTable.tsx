@@ -8,9 +8,10 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TableFooter from '@material-ui/core/TableFooter';
 import Paper from '@material-ui/core/Paper';
-import { Options, Title, Border, StyledTableCell } from './styles';
+import { Options, Title, Border, StyledTableCell, MarginedButton } from './styles';
 import Button from '@material-ui/core/Button';
 import { AddTodoDialog } from '../dialogs/addTodo/AddTodoDialog';
+import { AddUserDialog } from '../dialogs/addUser/AddUserDialog';
 import { columns, dateFormats, pagination } from '../../config/constants';
 import Pagination from '@material-ui/lab/Pagination';
 import { StyledPagination } from './styles';
@@ -23,6 +24,7 @@ import moment from 'moment';
 
 export const MainTable:React.FC = () => {
   const [ openAddDialog, setOpenAddDialog ] = useState(false);
+  const [ openAddUserDialog, setOpenAddUserDialog ] = useState(false);
 
   const [ todos, setTodos ] = useState<TodosData[]>([]);
   const [ currentPer, setPer ] = useState<number>(5);
@@ -90,7 +92,10 @@ export const MainTable:React.FC = () => {
     <TableContainer component={Paper}>
       <Options>
         <Title>Todos</Title>
-        <Button variant="outlined" onClick={() => {setOpenAddDialog(true)}}>Add</Button>
+        <div>
+          <MarginedButton variant="outlined" onClick={() => { setOpenAddDialog(true) }}>Add todo</MarginedButton>
+          <MarginedButton variant="outlined" onClick={() => { setOpenAddUserDialog(true) }}>Add user</MarginedButton>
+        </div>
       </Options>
       <Border></Border>
       <Table aria-label="simple table">
@@ -153,7 +158,10 @@ export const MainTable:React.FC = () => {
         closeDialog={() => {setOpenAddDialog(false)}}
         createTodo={createTodo}
       ></AddTodoDialog>
-      
+      <AddUserDialog
+        open={openAddUserDialog}
+        closeDialog={() => {setOpenAddUserDialog(false)}}
+      ></AddUserDialog>
     </TableContainer>
   );
 }
