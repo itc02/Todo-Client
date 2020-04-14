@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import TableCell from '@material-ui/core/TableCell';
 
 export const Options = styled.div`
   display: flex;
@@ -15,4 +16,8 @@ export const Title = styled.h1`
 export const Border = styled.hr`
   border: 0.5px solid #e0e0e0;
   margin-bottom: 0px;
+`;
+
+export const StyledTableCell = styled(TableCell)`
+  text-transform: capitalize
 `;
