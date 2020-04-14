@@ -35,7 +35,8 @@ export const MainTable:React.FC = () => {
         page: newPage
       }
     }).then(res => {
-      setTodos(res.data);
+      setTodos(res.data.todos);
+      setAllTodosCount(res.data.total_record_count);
     });
   }
 
@@ -62,9 +63,6 @@ export const MainTable:React.FC = () => {
 
   useEffect(() => {
     getTodos(currentPer, currentPage);
-    axios.get(`${routes.server}/${routes.todos}/count`).then(res => {
-      setAllTodosCount(parseInt(res.data.count));
-    });
   }, [ currentPage, currentPer ]);
 
   return (
