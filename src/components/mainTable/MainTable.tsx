@@ -20,7 +20,7 @@ export const MainTable:React.FC = () => {
   const todos = useTodos();
   const [ openAddDialog, setOpenAddDialog ] = useState(false);
 
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(pagination.rowsOnPage[0]);
 
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, todos.length - page * rowsPerPage);
@@ -31,7 +31,7 @@ export const MainTable:React.FC = () => {
 
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setRowsPerPage(parseInt(event.target.value));
-    setPage(0);
+    setPage(1);
   };
   
   return (

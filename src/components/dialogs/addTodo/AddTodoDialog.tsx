@@ -18,7 +18,7 @@ import DateFnsUtils from '@date-io/date-fns';
 
 interface Props {
   open: boolean;
-  closeDialog: any;
+  closeDialog: () => void;
 }
 
 interface MainData {
