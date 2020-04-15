@@ -10,12 +10,12 @@ export const DialogTitle = styled(Title)`
 `;
 
 export const StyledFormControl = styled(FormControl)`
-  margin-top: 20px
+  margin-top: 20px;
 `;
 
 export const Transition = React.forwardRef(
   (
     props: TransitionProps & { children?: React.ReactElement<any, any> },
-    ref: React.Ref<unknown>,
+    ref: React.Ref<any>,
   ) => <Slide direction="up" ref={ref} {...props} />
 );
