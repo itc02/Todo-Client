@@ -1,8 +1,6 @@
 import React, { useState, useEffect} from 'react';
-import { UsersData, useUsers } from '../../../utils/requests/users';
-import { TodosData } from '../../../utils/requests/todos';
-import axios from 'axios';
-import { labels, textFields, routes } from '../../../config/constants';
+import { UsersData } from '../../../utils/interfaces/users';
+import { routes, labels, textFields } from '../../../config/constants';
 import { DialogTitle, Transition, StyledFormControl } from './styles';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -14,11 +12,14 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import { KeyboardDatePicker, MuiPickersUtilsProvider  } from '@material-ui/pickers';
 import moment from 'moment';
+import axios from 'axios';
+
 import DateFnsUtils from '@date-io/date-fns';
 
 interface Props {
   open: boolean;
   closeDialog: () => void;
+  createTodo: (data: MainData) => void
 }
 
 interface MainData {
@@ -28,9 +29,11 @@ interface MainData {
   description: string
 }
 
-export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog }: Props) => {
-  const [ isOpen, setOpen ] = useState(open);
-  const users: UsersData[] = useUsers();
+export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog, createTodo }: Props) => {
+  const [ isOpen, setOpen ] = useState<boolean>(open);
+
+  const [ users, setUsers ] = useState<UsersData[]>([]);
+
   const [ title, setTitle ] = useState<string>('');
   const [ assignedTo, setAssignedTo ] = useState<string>('');
   const [ deadline, setDeadline ] = useState<Date | null>(null);
@@ -69,18 +72,12 @@ export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog }: Props) => {
   }
 
   const confirm = () => {
-    const data = { title, deadline, assigned_to: parseInt(assignedTo), description };
     if (isDataValid()) {
+      const data = { title, deadline, assigned_to: parseInt(assignedTo), description };
       clear();
-      addTodo(data);
+      createTodo(data);
       closeDialog();
     }
-  }
-
-  const addTodo = (data: MainData) => {
-    axios.post<TodosData[]>(`${routes.server}/${routes.todos}`, data)
-    .then(() => { window.location.href='/' })
-    .catch(err => console.log(err));
   }
 
   const usersId = () => [''].concat(users.map(user => user.id.toString()));
@@ -92,9 +89,11 @@ export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog }: Props) => {
 
   const renderInput = (params: any) => <TextField {...params} label={labels.assignTo} value='' variant='outlined'/>;
   
-
   useEffect(() => {
     setOpen(open);
+    axios.get(`${routes.server}/${routes.users}`).then(res => {
+      setUsers(res.data);
+    });
   }, [ open ]);
 
   return (

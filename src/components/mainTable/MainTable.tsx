@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useTodos, TodosData } from '../../utils/requests/todos';
+import React, { useState, useEffect } from 'react';
+import { TodosData } from '../../utils/interfaces/todos'
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -8,38 +8,92 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TableFooter from '@material-ui/core/TableFooter';
 import Paper from '@material-ui/core/Paper';
+import { Options, Title, Border, StyledTableCell, MarginedButton } from './styles';
 import Button from '@material-ui/core/Button';
-import { Options, Title, Border, StyledTableCell } from './styles';
 import { AddTodoDialog } from '../dialogs/addTodo/AddTodoDialog';
+import { AddUserDialog } from '../dialogs/addUser/AddUserDialog';
 import { columns, dateFormats, pagination } from '../../config/constants';
-import TablePagination from '@material-ui/core/TablePagination';
-import { TablePaginationActions } from '../pagination/TablePaginationActions';
+import Pagination from '@material-ui/lab/Pagination';
+import { StyledPagination } from './styles';
+import Select from '@material-ui/core/Select';
+import {routes} from '../../config/constants';
+import Checkbox from '@material-ui/core/Checkbox';
+import MenuItem from '@material-ui/core/MenuItem';
+import axios from 'axios';
 import moment from 'moment';
 
 export const MainTable:React.FC = () => {
-  const todos = useTodos();
   const [ openAddDialog, setOpenAddDialog ] = useState(false);
+  const [ openAddUserDialog, setOpenAddUserDialog ] = useState(false);
 
-  const [page, setPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(pagination.rowsOnPage[0]);
+  const [ todos, setTodos ] = useState<TodosData[]>([]);
+  const [ currentPer, setPer ] = useState<number>(5);
+  const [ currentPage, setPage ] = useState<number>(1);
+  const [ allTodosCount, setAllTodosCount ] = useState<number>(0);
 
-  const emptyRows = rowsPerPage - Math.min(rowsPerPage, todos.length - page * rowsPerPage);
+  const [ chosenTodos, setChosenTodos ] = useState<number[]>([]);
 
-  const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
-    setPage(newPage);
-  };
+  const getTodos = (newPer: number, newPage: number) => {
+    axios.get(`${routes.server}/${routes.todos}`, {
+      params: {
+        per: newPer,
+        page: newPage
+      }
+    }).then(res => {
+      setTodos(res.data.todos);
+      setAllTodosCount(res.data.total_record_count);
+    });
+  }
 
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setRowsPerPage(parseInt(event.target.value));
-    setPage(1);
-  };
+  const handlePerChange = (event: any) => {
+    const per = parseInt(event.target.value);
+    setPer(per);
+    getTodos(per, currentPage);
+  }
   
+  const handlePageChange = (event: any, page: any) => {
+    setPage(parseInt(page));
+    getTodos(currentPer, page);
+  }
+
+  const createTodo = (data: any) => {
+    axios.post(`${routes.server}/${routes.todos}`, data).then(res => {
+      setTodos(res.data);
+    });
+  }
+
+  const pagesCount = () => {
+    return todos.length === 0 ? 1 : Math.ceil(allTodosCount / currentPer);
+  }
+
+  const changeCheckboxState = (event: any) => {
+    const id = parseInt(event.target.value);
+    if(chosenTodos.includes(id)) {
+      setChosenTodos(chosenTodos.filter(todoId => todoId !== id));
+    } else {
+      setChosenTodos([...chosenTodos, id]);
+    }
+  }
+
+  const deleteTodos = () => {
+    axios.delete(`${routes.server}/${routes.todos}/${chosenTodos}`).then(res => {
+      setTodos(res.data);
+      setChosenTodos([]);
+    });
+  }
+
+  useEffect(() => {
+    getTodos(currentPer, currentPage);
+  }, [ currentPage, currentPer ]);
+
   return (
-    // FE table pagination -> https://codesandbox.io/s/x52qj?file=/demo.tsx
     <TableContainer component={Paper}>
       <Options>
         <Title>Todos</Title>
-        <Button variant="outlined" onClick={() => {setOpenAddDialog(true)}}>Add</Button>
+        <div>
+          <MarginedButton variant="outlined" onClick={() => { setOpenAddDialog(true) }}>Add todo</MarginedButton>
+          <MarginedButton variant="outlined" onClick={() => { setOpenAddUserDialog(true) }}>Add user</MarginedButton>
+        </div>
       </Options>
       <Border></Border>
       <Table aria-label="simple table">
@@ -51,12 +105,17 @@ export const MainTable:React.FC = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {(rowsPerPage > 0
-              ? todos.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              : todos
-            ).map((todo: TodosData) => {
+          {todos.map((todo: TodosData) => {
             return (
               <TableRow key={ todo.id }>
+                <TableCell style={{width: '1px'}}>
+                  <Checkbox
+                    color='primary'
+                    checked={chosenTodos.includes(todo.id)}
+                    onChange={changeCheckboxState}
+                    value={todo.id}
+                  />
+                </TableCell>
                 <TableCell>{ todo.title }</TableCell>
                 <StyledTableCell>{ todo.state }</StyledTableCell>
                 <TableCell>{ todo.user_name }</TableCell>
@@ -64,37 +123,43 @@ export const MainTable:React.FC = () => {
               </TableRow>
             )
           })}
-          {emptyRows > 0 && (
-            <TableRow style={{ height: pagination.rowHeight * emptyRows }}>
-              <TableCell colSpan={columns.length * 2} />
-            </TableRow>
-          )}
         </TableBody>
         <TableFooter>
           <TableRow>
-            <TablePagination
-              rowsPerPageOptions={pagination.rowsOnPage}
-              colSpan={columns.length}
-              count={todos.length}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              onChangePage={handleChangePage}
-              onChangeRowsPerPage={handleChangeRowsPerPage}
-              ActionsComponent={TablePaginationActions}
-              SelectProps={{
-                inputProps: { 'aria-label': 'rows per page' },
-                native: true,
-              }}
-            />  
+            <TableCell>
+              <Button
+                variant='outlined'
+                disabled={chosenTodos.length === 0}
+                onClick={deleteTodos}
+              >
+                Delete
+              </Button>
+            </TableCell>
+            <TableCell colSpan={4}>
+              <StyledPagination>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={currentPer}
+                  onChange={handlePerChange}
+                >
+                  { pagination.rowsOnPage.map(page => <MenuItem key={page} value={page}>{page}</MenuItem> ) }
+                </Select>
+                <Pagination onChange={handlePageChange} count={pagesCount()} page={currentPage} color='primary'/>
+              </StyledPagination>
+            </TableCell>
           </TableRow>
         </TableFooter>
       </Table>
       <AddTodoDialog 
         open={openAddDialog} 
         closeDialog={() => {setOpenAddDialog(false)}}
+        createTodo={createTodo}
       ></AddTodoDialog>
-      
+      <AddUserDialog
+        open={openAddUserDialog}
+        closeDialog={() => {setOpenAddUserDialog(false)}}
+      ></AddUserDialog>
     </TableContainer>
   );
 }
-
