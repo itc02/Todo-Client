@@ -19,14 +19,14 @@ import DateFnsUtils from '@date-io/date-fns';
 interface Props {
   open: boolean;
   closeDialog: () => void;
-  createTodo: (data: MainData) => void
+  createTodo: (data: MainData) => void;
 }
 
 interface MainData {
   title: string;
   deadline: Date | null;
   assigned_to: number;
-  description: string
+  description: string;
 }
 
 export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog, createTodo }: Props) => {
@@ -92,7 +92,7 @@ export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog, createTodo }:
   useEffect(() => {
     setOpen(open);
     axios.get(`${routes.server}/${routes.users}`).then(res => {
-      setUsers(res.data);
+      setUsers(res.data.users);
     });
   }, [ open ]);
 

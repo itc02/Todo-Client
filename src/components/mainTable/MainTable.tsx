@@ -12,25 +12,23 @@ import { Options, Title, Border, StyledTableCell, MarginedButton } from './style
 import Button from '@material-ui/core/Button';
 import { AddTodoDialog } from '../dialogs/addTodo/AddTodoDialog';
 import { AddUserDialog } from '../dialogs/addUser/AddUserDialog';
-import { columns, dateFormats, pagination } from '../../config/constants';
-import Pagination from '@material-ui/lab/Pagination';
-import { StyledPagination } from './styles';
-import Select from '@material-ui/core/Select';
-import {routes} from '../../config/constants';
-import Checkbox from '@material-ui/core/Checkbox';
-import MenuItem from '@material-ui/core/MenuItem';
+import { ShowUsersDialog } from '../dialogs/showUsers/ShowUsersDialog';
+import { columns, dateFormats } from '../../config/constants';
+import { routes, pagination } from '../../config/constants';
 import axios from 'axios';
 import moment from 'moment';
+import { TodoCheckbox } from '../checkbox/TodoCheckbox';
+import { TodoPagination } from '../pagination/TodoPagination';
 
 export const MainTable:React.FC = () => {
-  const [ openAddDialog, setOpenAddDialog ] = useState(false);
-  const [ openAddUserDialog, setOpenAddUserDialog ] = useState(false);
+  const [ openAddDialog, setOpenAddDialog ] = useState<boolean>(false);
+  const [ openAddUserDialog, setOpenAddUserDialog ] = useState<boolean>(false);
+  const [ openShowUsersDialog, setOpenShowUsersDialog ] = useState<boolean>(false);
 
   const [ todos, setTodos ] = useState<TodosData[]>([]);
-  const [ currentPer, setPer ] = useState<number>(5);
+  const [ currentPer, setPer ] = useState<number>(pagination.rowsOnPage[0]);
   const [ currentPage, setPage ] = useState<number>(1);
   const [ allTodosCount, setAllTodosCount ] = useState<number>(0);
-
   const [ chosenTodos, setChosenTodos ] = useState<number[]>([]);
 
   const getTodos = (newPer: number, newPage: number) => {
@@ -45,58 +43,45 @@ export const MainTable:React.FC = () => {
     });
   }
 
-  const handlePerChange = (event: any) => {
-    const per = parseInt(event.target.value);
-    setPer(per);
-    getTodos(per, currentPage);
-  }
-  
-  const handlePageChange = (event: any, page: any) => {
-    setPage(parseInt(page));
-    getTodos(currentPer, page);
-  }
-
-  const createTodo = (data: any) => {
-    axios.post(`${routes.server}/${routes.todos}`, data).then(res => {
-      setTodos(res.data);
+  const createTodo = ({title, deadline, assigned_to, description}: any) => {
+    axios.post(`${routes.server}/${routes.todos}`, {
+      title,
+      deadline,
+      assigned_to,
+      description,
+      page: currentPage,
+      per: currentPer
+    }).then(res => {
+      setTodos(res.data.todos);
+      setAllTodosCount(res.data.total_record_count);
     });
-  }
-
-  const pagesCount = () => {
-    return todos.length === 0 ? 1 : Math.ceil(allTodosCount / currentPer);
-  }
-
-  const changeCheckboxState = (event: any) => {
-    const id = parseInt(event.target.value);
-    if(chosenTodos.includes(id)) {
-      setChosenTodos(chosenTodos.filter(todoId => todoId !== id));
-    } else {
-      setChosenTodos([...chosenTodos, id]);
-    }
   }
 
   const deleteTodos = () => {
-    axios.delete(`${routes.server}/${routes.todos}/${chosenTodos}`).then(res => {
-      setTodos(res.data);
-      setChosenTodos([]);
+    axios.delete(`${routes.server}/${routes.todos}`, { data: {
+      ids: chosenTodos
+    }}).then(res => {
+      setTodos(res.data.todos);
+      setAllTodosCount(res.data.total_record_count);
     });
+    setChosenTodos([]);
   }
 
   useEffect(() => {
     getTodos(currentPer, currentPage);
   }, [ currentPage, currentPer ]);
-
   return (
     <TableContainer component={Paper}>
       <Options>
         <Title>Todos</Title>
         <div>
+          <MarginedButton variant="outlined" onClick={() => { setOpenShowUsersDialog(true) }}>All users</MarginedButton>
           <MarginedButton variant="outlined" onClick={() => { setOpenAddDialog(true) }}>Add todo</MarginedButton>
           <MarginedButton variant="outlined" onClick={() => { setOpenAddUserDialog(true) }}>Add user</MarginedButton>
         </div>
       </Options>
       <Border></Border>
-      <Table aria-label="simple table">
+      <Table>
         <TableHead>
           <TableRow>
             {columns.map((column: string) => {
@@ -109,11 +94,10 @@ export const MainTable:React.FC = () => {
             return (
               <TableRow key={ todo.id }>
                 <TableCell style={{width: '1px'}}>
-                  <Checkbox
-                    color='primary'
-                    checked={chosenTodos.includes(todo.id)}
-                    onChange={changeCheckboxState}
-                    value={todo.id}
+                  <TodoCheckbox 
+                    itemId={todo.id} 
+                    chosenItems={chosenTodos} 
+                    setChosenItems={setChosenTodos}
                   />
                 </TableCell>
                 <TableCell>{ todo.title }</TableCell>
@@ -136,30 +120,33 @@ export const MainTable:React.FC = () => {
               </Button>
             </TableCell>
             <TableCell colSpan={4}>
-              <StyledPagination>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={currentPer}
-                  onChange={handlePerChange}
-                >
-                  { pagination.rowsOnPage.map(page => <MenuItem key={page} value={page}>{page}</MenuItem> ) }
-                </Select>
-                <Pagination onChange={handlePageChange} count={pagesCount()} page={currentPage} color='primary'/>
-              </StyledPagination>
+              <TodoPagination 
+                items={todos}
+                getItems={getTodos}
+                allItemsCount={allTodosCount}
+                page={allTodosCount === todos.length ? 1 : currentPage}
+                per={currentPer}
+                setPage={setPage}
+                setPer={setPer}
+              />
             </TableCell>
           </TableRow>
         </TableFooter>
       </Table>
+      
       <AddTodoDialog 
         open={openAddDialog} 
-        closeDialog={() => {setOpenAddDialog(false)}}
+        closeDialog={() => { setOpenAddDialog(false) }}
         createTodo={createTodo}
-      ></AddTodoDialog>
+      />
       <AddUserDialog
         open={openAddUserDialog}
-        closeDialog={() => {setOpenAddUserDialog(false)}}
-      ></AddUserDialog>
+        closeDialog={() => { setOpenAddUserDialog(false) }}
+      />
+      <ShowUsersDialog
+        open={openShowUsersDialog}
+        closeDialog={() => { setOpenShowUsersDialog(false) }}
+      />
     </TableContainer>
   );
 }
