@@ -1,16 +1,17 @@
-export const columns = ['Title', 'State', 'Assigned to', 'End date'];
+export const columns = ['', 'Title', 'State', 'Assigned to', 'End date'];
 
 export const routes = {
   server: 'http://localhost:3000',
   todos: 'todos',
   users: 'users'
-}
+};
 
 export const labels = {
   title: 'New title',
   deadline: 'End date',
   assignTo: 'Assign to',
-  description: 'New description'
+  description: 'New description',
+  user: 'New user'
 };
 
 export const states = {
@@ -25,10 +26,18 @@ export const dateFormats = {
 
 export const textFields = {
   title: {
-    maxLength: 16
+    maxLength: 32
   },
   description: {
-    maxLength: 256,
+    maxLength: 512,
     rows: 8
+  },
+  user: {
+    maxLength: 32
   }
-}
+};
+
+export const pagination = {
+  rowsOnPage: [5, 10, 20],
+  rowHeight: 53
+};

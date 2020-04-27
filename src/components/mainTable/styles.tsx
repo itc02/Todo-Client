@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import TableCell from '@material-ui/core/TableCell';
+import Button from '@material-ui/core/Button';
 
 export const Options = styled.div`
   display: flex;
@@ -19,5 +20,14 @@ export const Border = styled.hr`
 `;
 
 export const StyledTableCell = styled(TableCell)`
-  text-transform: capitalize
+  text-transform: capitalize;
+`;
+
+export const StyledPagination = styled.div`
+  display: flex;
+  justify-content: flex-end;
+`;
+
+export const MarginedButton = styled(Button)`
+  margin-left: 10px;
 `;
