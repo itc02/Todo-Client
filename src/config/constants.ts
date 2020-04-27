@@ -10,7 +10,8 @@ export const labels = {
   title: 'New title',
   deadline: 'End date',
   assignTo: 'Assign to',
-  description: 'New description'
+  description: 'New description',
+  user: 'New user'
 };
 
 export const states = {
@@ -25,11 +26,14 @@ export const dateFormats = {
 
 export const textFields = {
   title: {
-    maxLength: 16
+    maxLength: 32
   },
   description: {
-    maxLength: 256,
+    maxLength: 512,
     rows: 8
+  },
+  user: {
+    maxLength: 32
   }
 };
 
