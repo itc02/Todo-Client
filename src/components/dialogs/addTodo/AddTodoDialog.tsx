@@ -92,7 +92,7 @@ export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog, createTodo }:
   useEffect(() => {
     setOpen(open);
     axios.get(`${routes.server}/${routes.users}`).then(res => {
-      setUsers(res.data);
+      setUsers(res.data.users);
     });
   }, [ open ]);
 

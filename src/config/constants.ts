@@ -3,7 +3,8 @@ export const columns = ['', 'Title', 'State', 'Assigned to', 'End date'];
 export const routes = {
   server: 'http://localhost:3000',
   todos: 'todos',
-  users: 'users'
+  users: 'users',
+  allUsers: 'all'
 };
 
 export const labels = {
@@ -38,6 +39,5 @@ export const textFields = {
 };
 
 export const pagination = {
-  rowsOnPage: [5, 10, 20],
-  rowHeight: 53
+  rowsOnPage: [5, 10, 20]
 };

@@ -48,7 +48,7 @@ export const AddUserDialog = ({ open, closeDialog }: Props) => {
 
   useEffect(() => {
     setOpen(open);
-    axios.get(`${routes.server}/${routes.users}`).then(res => {
+    axios.get(`${routes.server}/${routes.users}/${routes.allUsers}`).then(res => {
       setUsers(res.data);
     });
   }, [ open ]);
