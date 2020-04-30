@@ -121,6 +121,7 @@ export const ShowUsersDialog = ({ open, closeDialog }: Props) => {
                     per={currentPer}
                     setPage={setPage}
                     setPer={setPer}
+                    isSorted={false}
                   />
                 </TableCell>
               </TableRow>

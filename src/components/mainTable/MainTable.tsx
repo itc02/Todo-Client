@@ -8,7 +8,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TableFooter from '@material-ui/core/TableFooter';
 import Paper from '@material-ui/core/Paper';
-import { Options, Title, Border, StyledTableCell, MarginedButton } from './styles';
+import { Options, Title, Border, StyledTableCell, MarginedButton, Arrow } from './styles';
 import Button from '@material-ui/core/Button';
 import { AddTodoDialog } from '../dialogs/addTodo/AddTodoDialog';
 import { AddUserDialog } from '../dialogs/addUser/AddUserDialog';
@@ -30,6 +30,10 @@ export const MainTable:React.FC = () => {
   const [ currentPage, setPage ] = useState<number>(1);
   const [ allTodosCount, setAllTodosCount ] = useState<number>(0);
   const [ chosenTodos, setChosenTodos ] = useState<number[]>([]);
+
+  const [ sortingCriteria, setSortingCriteria ] = useState<string>('');
+  const [ order, setOrder ] = useState<string>('');
+  const sortingCriterias = ['title', 'state', 'user_name', 'deadline'];
 
   const getTodos = (newPer: number, newPage: number) => {
     axios.get(`${routes.server}/${routes.todos}`, {
@@ -67,25 +71,58 @@ export const MainTable:React.FC = () => {
     setChosenTodos([]);
   }
 
+  const sortTodos = (e: any, ) => {
+    const newOrder = order === 'DESC' || '' ? 'ASC' : 'DESC';
+    const newCriteria = e.target.id;
+    setSortingCriteria(newCriteria);
+    setOrder(newOrder);
+    sortQuery(newCriteria, newOrder);
+  }
+
+  const sortQuery = (newCriteria: string, newOrder: string) => {
+    axios.get(`${routes.server}/${routes.todos}/${routes.sortTodos}`, {
+      params: {
+        per: currentPer,
+        page: currentPage,
+        sorting_criteria: newCriteria,
+        order: newOrder
+      }
+    }).then(res => {
+      setTodos(res.data);
+    });
+  }
+
   useEffect(() => {
-    getTodos(currentPer, currentPage);
+    if(!sortingCriteria) {
+      getTodos(currentPer, currentPage);
+    } else {
+      sortQuery(sortingCriteria, order);
+    }
   }, [ currentPage, currentPer ]);
+
   return (
     <TableContainer component={Paper}>
       <Options>
         <Title>Todos</Title>
         <div>
-          <MarginedButton variant="outlined" onClick={() => { setOpenShowUsersDialog(true) }}>All users</MarginedButton>
-          <MarginedButton variant="outlined" onClick={() => { setOpenAddDialog(true) }}>Add todo</MarginedButton>
-          <MarginedButton variant="outlined" onClick={() => { setOpenAddUserDialog(true) }}>Add user</MarginedButton>
+          <MarginedButton variant='outlined' onClick={() => { setOpenShowUsersDialog(true) }}>All users</MarginedButton>
+          <MarginedButton variant='outlined' onClick={() => { setOpenAddDialog(true) }}>Add todo</MarginedButton>
+          <MarginedButton variant='outlined' onClick={() => { setOpenAddUserDialog(true) }}>Add user</MarginedButton>
         </div>
       </Options>
       <Border></Border>
       <Table>
         <TableHead>
           <TableRow>
-            {columns.map((column: string) => {
-              return <TableCell key={ column }>{ column }</TableCell>
+            {columns.map((column: string, index: number) => {
+              return (
+                <TableCell key={ column }>
+                  {index !== 0 &&
+                    <Arrow className={order ? `fa fa-arrow-${order === 'ASC' ? `up` : `down`}` : `fa fa-minus`} onClick={sortTodos} id={sortingCriterias[index - 1]}></Arrow>
+                  }
+                  { column }
+                </TableCell>
+              );
             })}
           </TableRow>
         </TableHead>
@@ -128,6 +165,7 @@ export const MainTable:React.FC = () => {
                 per={currentPer}
                 setPage={setPage}
                 setPer={setPer}
+                isSorted={Boolean(sortingCriteria)}
               />
             </TableCell>
           </TableRow>
