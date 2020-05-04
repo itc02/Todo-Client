@@ -4,7 +4,8 @@ export const routes = {
   server: 'http://localhost:3000',
   todos: 'todos',
   users: 'users',
-  allUsers: 'all'
+  allUsers: 'all',
+  sortTodos: 'sort'
 };
 
 export const labels = {
