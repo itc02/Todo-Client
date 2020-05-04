@@ -31,15 +31,17 @@ export const MainTable:React.FC = () => {
   const [ allTodosCount, setAllTodosCount ] = useState<number>(0);
   const [ chosenTodos, setChosenTodos ] = useState<number[]>([]);
 
-  const [ sortingCriteria, setSortingCriteria ] = useState<string>('');
-  const [ order, setOrder ] = useState<string>('');
   const sortingCriterias = ['title', 'state', 'user_name', 'deadline'];
+  const [ sortingCriteria, setSortingCriteria ] = useState<string>(sortingCriterias[0]);
+  const [ order, setOrder ] = useState<string>('ASC');
 
   const getTodos = (newPer: number, newPage: number) => {
     axios.get(`${routes.server}/${routes.todos}`, {
       params: {
         per: newPer,
-        page: newPage
+        page: newPage,
+        order,
+        sorting_criteria: sortingCriteria
       }
     }).then(res => {
       setTodos(res.data.todos);
@@ -72,33 +74,15 @@ export const MainTable:React.FC = () => {
   }
 
   const sortTodos = (e: any, ) => {
-    const newOrder = order === 'DESC' || '' ? 'ASC' : 'DESC';
+    const newOrder = order === 'DESC' ? 'ASC' : 'DESC';
     const newCriteria = e.target.id;
     setSortingCriteria(newCriteria);
     setOrder(newOrder);
-    sortQuery(newCriteria, newOrder);
-  }
-
-  const sortQuery = (newCriteria: string, newOrder: string) => {
-    axios.get(`${routes.server}/${routes.todos}/${routes.sortTodos}`, {
-      params: {
-        per: currentPer,
-        page: currentPage,
-        sorting_criteria: newCriteria,
-        order: newOrder
-      }
-    }).then(res => {
-      setTodos(res.data);
-    });
   }
 
   useEffect(() => {
-    if(!sortingCriteria) {
-      getTodos(currentPer, currentPage);
-    } else {
-      sortQuery(sortingCriteria, order);
-    }
-  }, [ currentPage, currentPer ]);
+    getTodos(currentPer, currentPage);
+  }, [ currentPage, currentPer, order ]);
 
   return (
     <TableContainer component={Paper}>
