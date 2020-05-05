@@ -26,3 +26,12 @@ export const StyledTableCell = styled(TableCell)`
 export const MarginedButton = styled(Button)`
   margin-left: 10px;
 `;
+
+export const Arrow = styled.i`
+  opacity: 0;
+  cursor: pointer;
+  transition: 0.4s;
+  &:hover {
+    opacity: 1;
+  }
+`;

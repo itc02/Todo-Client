@@ -13,19 +13,24 @@ interface Props {
   per: number;
   setPage: (page: number) => void;
   setPer: (per: number) => void;
+  isSorted: boolean;
 }
 
-const TodoPagination = ({items, getItems, allItemsCount, per, page, setPage, setPer}: Props) => {
+const TodoPagination = ({items, getItems, allItemsCount, per, page, setPage, setPer, isSorted}: Props) => {
 
   const handlePerChange = (event: any) => {
     const newPer = parseInt(event.target.value);
     setPer(newPer);
-    getItems(newPer, page);
+    if(!isSorted) {
+      getItems(newPer, page);
+    }
   }
 
   const handlePageChange = (event: any, newPage: any) => {
     setPage(newPage);
-    getItems(per, newPage);
+    if(!isSorted) {
+      getItems(per, newPage);
+    }
   }
 
   const pagesCount = () => {
