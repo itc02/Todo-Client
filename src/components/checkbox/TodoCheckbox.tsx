@@ -8,7 +8,7 @@ interface Props {
   isDisabled?: boolean;
 }
 
-export const TodoCheckbox = ({ itemId, chosenItems, setChosenItems, isDisabled }: Props) => {
+const TodoCheckbox = ({ itemId, chosenItems, setChosenItems, isDisabled }: Props) => {
   const changeCheckboxState = (event: any) => {
     const id = parseInt(event.target.value);
     if(chosenItems.includes(id)) {
@@ -31,3 +31,5 @@ export const TodoCheckbox = ({ itemId, chosenItems, setChosenItems, isDisabled }
     />
   );
 }
+
+export default TodoCheckbox;

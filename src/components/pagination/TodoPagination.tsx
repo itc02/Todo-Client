@@ -15,7 +15,7 @@ interface Props {
   setPer: (per: number) => void;
 }
 
-export const TodoPagination = ({items, getItems, allItemsCount, per, page, setPage, setPer}: Props) => {
+const TodoPagination = ({items, getItems, allItemsCount, per, page, setPage, setPer}: Props) => {
 
   const handlePerChange = (event: any) => {
     const newPer = parseInt(event.target.value);
@@ -44,3 +44,5 @@ export const TodoPagination = ({items, getItems, allItemsCount, per, page, setPa
     </StyledPagination>
   );
 }
+
+export default TodoPagination;

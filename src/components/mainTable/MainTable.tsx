@@ -17,8 +17,8 @@ import { columns, dateFormats } from '../../config/constants';
 import { routes, pagination } from '../../config/constants';
 import axios from 'axios';
 import moment from 'moment';
-import { TodoCheckbox } from '../checkbox/TodoCheckbox';
-import { TodoPagination } from '../pagination/TodoPagination';
+import Checkbox from '../checkbox/TodoCheckbox';
+import Pagination from '../pagination/TodoPagination';
 
 export const MainTable:React.FC = () => {
   const [ openAddDialog, setOpenAddDialog ] = useState<boolean>(false);
@@ -94,7 +94,7 @@ export const MainTable:React.FC = () => {
             return (
               <TableRow key={ todo.id }>
                 <TableCell style={{width: '1px'}}>
-                  <TodoCheckbox 
+                  <Checkbox 
                     itemId={todo.id} 
                     chosenItems={chosenTodos} 
                     setChosenItems={setChosenTodos}
@@ -120,7 +120,7 @@ export const MainTable:React.FC = () => {
               </Button>
             </TableCell>
             <TableCell colSpan={4}>
-              <TodoPagination 
+              <Pagination 
                 items={todos}
                 getItems={getTodos}
                 allItemsCount={allTodosCount}
