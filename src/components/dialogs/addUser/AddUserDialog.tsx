@@ -16,7 +16,7 @@ interface Props {
   closeDialog: () => void;
 }
 
-export const AddUserDialog = ({ open, closeDialog }: Props) => {
+export const AddUserDialog:React.FC<Props> = ({ open, closeDialog }) => {
   const [ users, setUsers ] = useState<UsersData[]>([]);
 
   const [ isOpen, setOpen ] = useState<boolean>(open);

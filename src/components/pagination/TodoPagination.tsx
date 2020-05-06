@@ -16,7 +16,7 @@ interface Props {
   isSorted: boolean;
 }
 
-const TodoPagination = ({items, getItems, allItemsCount, per, page, setPage, setPer, isSorted}: Props) => {
+const TodoPagination:React.FC<Props> = ({items, getItems, allItemsCount, per, page, setPage, setPer, isSorted}) => {
 
   const handlePerChange = (event: any) => {
     const newPer = parseInt(event.target.value);

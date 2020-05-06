@@ -29,7 +29,7 @@ interface MainData {
   description: string;
 }
 
-export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog, createTodo }: Props) => {
+export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog, createTodo }) => {
   const [ isOpen, setOpen ] = useState<boolean>(open);
 
   const [ users, setUsers ] = useState<UsersData[]>([]);

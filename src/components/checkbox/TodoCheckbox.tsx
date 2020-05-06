@@ -3,23 +3,23 @@ import Checkbox from '@material-ui/core/Checkbox';
 
 interface Props {
   itemId: number;
-  chosenItems: number[];
-  setChosenItems: (items: number[]) => void;
+  selectedItems: number[];
+  setSelectedItems: (items: number[]) => void;
   isDisabled?: boolean;
 }
 
-const TodoCheckbox = ({ itemId, chosenItems, setChosenItems, isDisabled }: Props) => {
+const TodoCheckbox: React.FC<Props> = ({ itemId, selectedItems, setSelectedItems, isDisabled }) => {
   const changeCheckboxState = (event: any) => {
     const id = parseInt(event.target.value);
-    if(chosenItems.includes(id)) {
-      setChosenItems(chosenItems.filter((item: number) => item !== id));
+    if(selectedItems.includes(id)) {
+      setSelectedItems(selectedItems.filter((item: number) => item !== id));
     } else {
-      setChosenItems([...chosenItems, id]);
+      setSelectedItems([...selectedItems, id]);
     }
   }
 
   useEffect(() => {
-    chosenItems.length = 0;
+    selectedItems.length = 0;
   }, []);
   
   return(

@@ -15,8 +15,8 @@ import Paper from '@material-ui/core/Paper';
 import { routes, pagination } from '../../../config/constants';
 import { Transition } from '../addTodo/styles';
 import { UsersData } from '../../../utils/interfaces/users';
-import { TodoCheckbox } from '../../checkbox/TodoCheckbox';
-import { TodoPagination } from '../../pagination/TodoPagination';
+import Checkbox from '../../checkbox/TodoCheckbox';
+import Pagination from '../../pagination/TodoPagination';
 import axios from 'axios';
 
 interface Props {
@@ -24,7 +24,7 @@ interface Props {
   closeDialog: () => void;
 }
 
-export const ShowUsersDialog = ({ open, closeDialog }: Props) => {
+export const ShowUsersDialog:React.FC<Props> = ({ open, closeDialog }) => {
   const [ users, setUsers ] = useState<UsersData[]>([]);
   const [ todosNumber, setTodosNumber ] = useState<number[]>([]);
   const [ allUsersCount, setAllUsersCount ] = useState<number>(0);
@@ -97,10 +97,10 @@ export const ShowUsersDialog = ({ open, closeDialog }: Props) => {
                 return(
                   <TableRow key={user.id}>
                     <TableCell>
-                      <TodoCheckbox 
+                      <Checkbox 
                         itemId={user.id} 
-                        chosenItems={chosenUsers} 
-                        setChosenItems={setChosenUsers}
+                        selectedItems={chosenUsers} 
+                        setSelectedItems={setChosenUsers}
                         isDisabled={todosNumber[index] !== 0}
                       />
                     </TableCell>
@@ -113,7 +113,7 @@ export const ShowUsersDialog = ({ open, closeDialog }: Props) => {
             <TableFooter>
               <TableRow>
                 <TableCell colSpan={3}>
-                  <TodoPagination
+                  <Pagination
                     items={users}
                     getItems={getUsers}
                     allItemsCount={allUsersCount}

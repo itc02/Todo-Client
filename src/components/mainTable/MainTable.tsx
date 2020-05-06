@@ -117,8 +117,8 @@ export const MainTable:React.FC = () => {
                 <TableCell style={{width: '1px'}}>
                   <Checkbox 
                     itemId={todo.id} 
-                    chosenItems={chosenTodos} 
-                    setChosenItems={setChosenTodos}
+                    selectedItems={chosenTodos} 
+                    setSelectedItems={setChosenTodos}
                   />
                 </TableCell>
                 <TableCell>{ todo.title }</TableCell>
