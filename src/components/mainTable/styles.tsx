@@ -23,11 +23,15 @@ export const StyledTableCell = styled(TableCell)`
   text-transform: capitalize;
 `;
 
-export const StyledPagination = styled.div`
-  display: flex;
-  justify-content: flex-end;
-`;
-
 export const MarginedButton = styled(Button)`
   margin-left: 10px;
+`;
+
+export const Arrow = styled.i`
+  opacity: 0;
+  cursor: pointer;
+  transition: 0.4s;
+  &:hover {
+    opacity: 1;
+  }
 `;

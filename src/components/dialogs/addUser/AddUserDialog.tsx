@@ -16,7 +16,7 @@ interface Props {
   closeDialog: () => void;
 }
 
-export const AddUserDialog = ({ open, closeDialog }: Props) => {
+export const AddUserDialog:React.FC<Props> = ({ open, closeDialog }) => {
   const [ users, setUsers ] = useState<UsersData[]>([]);
 
   const [ isOpen, setOpen ] = useState<boolean>(open);
@@ -48,7 +48,11 @@ export const AddUserDialog = ({ open, closeDialog }: Props) => {
 
   useEffect(() => {
     setOpen(open);
-    axios.get(`${routes.server}/${routes.users}`).then(res => {
+    axios.get(`${routes.server}/${routes.users}`, {
+      params: {
+        without_pagination: true
+      }
+    }).then(res => {
       setUsers(res.data);
     });
   }, [ open ]);
