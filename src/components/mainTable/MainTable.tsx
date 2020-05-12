@@ -32,10 +32,12 @@ export const MainTable:React.FC = () => {
   const [ chosenTodos, setChosenTodos ] = useState<number[]>([]);
 
   const sortingCriterias = ['title', 'state', 'user_name', 'deadline'];
+  const orders = ['none', 'ASC', 'DESC'];
   const [ sortingCriteria, setSortingCriteria ] = useState<string>(sortingCriterias[0]);
-  const [ order, setOrder ] = useState<string>('ASC');
+  const [ order, setOrder ] = useState<string>(orders[0]);
 
   const getTodos = (newPer: number, newPage: number) => {
+    console.log(order)
     axios.get(`${routes.server}/${routes.todos}`, {
       params: {
         per: newPer,
@@ -70,7 +72,8 @@ export const MainTable:React.FC = () => {
   }
 
   const sortTodos = (e: any, ) => {
-    const newOrder = order === 'DESC' ? 'ASC' : 'DESC';
+    const index = orders.indexOf(order)
+    const newOrder = orders[index == orders.length - 1 ? 0 : index + 1];
     const newCriteria = e.target.id;
     setSortingCriteria(newCriteria);
     setOrder(newOrder);
