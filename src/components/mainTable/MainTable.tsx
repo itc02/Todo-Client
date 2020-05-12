@@ -55,20 +55,16 @@ export const MainTable:React.FC = () => {
       deadline,
       assigned_to,
       description,
-      page: currentPage,
-      per: currentPer
     }).then(res => {
-      setTodos(res.data.todos);
-      setAllTodosCount(res.data.total_record_count);
+      getTodos(currentPer, currentPage);
     });
   }
 
   const deleteTodos = () => {
     axios.delete(`${routes.server}/${routes.todos}`, { data: {
       ids: chosenTodos
-    }}).then(res => {
-      setTodos(res.data.todos);
-      setAllTodosCount(res.data.total_record_count);
+    }}).then(() => {
+      getTodos(currentPer, currentPage);
     });
     setChosenTodos([]);
   }
