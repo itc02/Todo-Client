@@ -9,7 +9,6 @@ import TableRow from '@material-ui/core/TableRow';
 import TableFooter from '@material-ui/core/TableFooter';
 import Paper from '@material-ui/core/Paper';
 import { Options, Title, Border, StyledTableCell, MarginedButton, Arrow } from './styles';
-import Button from '@material-ui/core/Button';
 import { AddTodoDialog } from '../dialogs/addTodo/AddTodoDialog';
 import { AddUserDialog } from '../dialogs/addUser/AddUserDialog';
 import { ShowUsersDialog } from '../dialogs/showUsers/ShowUsersDialog';
@@ -19,13 +18,16 @@ import axios from 'axios';
 import moment from 'moment';
 import Checkbox from '../checkbox/TodoCheckbox';
 import Pagination from '../pagination/TodoPagination';
+import { UsersData } from '../../utils/interfaces/users';
 
 export const MainTable:React.FC = () => {
   const [ openAddDialog, setOpenAddDialog ] = useState<boolean>(false);
   const [ openAddUserDialog, setOpenAddUserDialog ] = useState<boolean>(false);
   const [ openShowUsersDialog, setOpenShowUsersDialog ] = useState<boolean>(false);
-
+  const [ isEdit, setIsEdit ] = useState<boolean>(false);
+  
   const [ todos, setTodos ] = useState<TodosData[]>([]);
+  const [ users, setUsers ] = useState<UsersData[]>([]);
   const [ currentPer, setPer ] = useState<number>(pagination.rowsOnPage[0]);
   const [ currentPage, setPage ] = useState<number>(1);
   const [ allTodosCount, setAllTodosCount ] = useState<number>(0);
@@ -34,6 +36,16 @@ export const MainTable:React.FC = () => {
   const sortingCriterias = ['title', 'state', 'user_name', 'deadline'];
   const [ sortingCriteria, setSortingCriteria ] = useState<string>(sortingCriterias[0]);
   const [ order, setOrder ] = useState<string>('ASC');
+
+  const getUsers = () => {
+    axios.get(`${routes.server}/${routes.users}`, {
+      params: {
+        without_pagination: true
+      }
+    }).then(res => {
+      setUsers(res.data);
+    })
+  }
 
   const getTodos = (newPer: number, newPage: number) => {
     axios.get(`${routes.server}/${routes.todos}`, {
@@ -63,6 +75,18 @@ export const MainTable:React.FC = () => {
     });
   }
 
+  const editTodo = ({id, title, deadline, assigned_to, description, state}: any) => {
+    axios.put(`${routes.server}/${routes.todos}/${id}`, {
+      title,
+      deadline,
+      assigned_to,
+      description,
+      state
+    }).then(res => {
+      getTodos(currentPer, currentPage);
+    })
+  }
+
   const deleteTodos = () => {
     axios.delete(`${routes.server}/${routes.todos}`, { data: {
       ids: chosenTodos
@@ -90,8 +114,8 @@ export const MainTable:React.FC = () => {
         <Title>Todos</Title>
         <div>
           <MarginedButton variant='outlined' onClick={() => { setOpenShowUsersDialog(true) }}>All users</MarginedButton>
-          <MarginedButton variant='outlined' onClick={() => { setOpenAddDialog(true) }}>Add todo</MarginedButton>
-          <MarginedButton variant='outlined' onClick={() => { setOpenAddUserDialog(true) }}>Add user</MarginedButton>
+          <MarginedButton variant='outlined' onClick={() => { setOpenAddDialog(true); setIsEdit(false) }}>Add todo</MarginedButton>
+          <MarginedButton variant='outlined' onClick={() => { setOpenAddUserDialog(true) }}>Add user</MarginedButton>          
         </div>
       </Options>
       <Border></Border>
@@ -132,13 +156,14 @@ export const MainTable:React.FC = () => {
         <TableFooter>
           <TableRow>
             <TableCell>
-              <Button
-                variant='outlined'
-                disabled={chosenTodos.length === 0}
-                onClick={deleteTodos}
-              >
-                Delete
-              </Button>
+              <Options>
+                <MarginedButton variant='outlined' disabled={chosenTodos.length === 0} onClick={deleteTodos}>
+                  Delete
+                </MarginedButton>
+                <MarginedButton variant='outlined' disabled={chosenTodos.length !== 1} onClick={() => { setOpenAddDialog(true); setIsEdit(true) }} >
+                  Edit
+                </MarginedButton>
+              </Options>
             </TableCell>
             <TableCell colSpan={4}>
               <Pagination 
@@ -160,6 +185,9 @@ export const MainTable:React.FC = () => {
         open={openAddDialog} 
         closeDialog={() => { setOpenAddDialog(false) }}
         createTodo={createTodo}
+        isEdit={isEdit}
+        editTodo={editTodo}
+        prevData={todos.find(todo => todo.id === chosenTodos[0]) || todos[0]}
       />
       <AddUserDialog
         open={openAddUserDialog}

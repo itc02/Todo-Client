@@ -1,7 +1,7 @@
 import React, { useState, useEffect} from 'react';
 import { UsersData } from '../../../utils/interfaces/users';
-import { routes, labels, textFields } from '../../../config/constants';
-import { DialogTitle, Transition, StyledFormControl } from './styles';
+import { routes, labels, textFields, states } from '../../../config/constants';
+import { DialogTitle, Transition, StyledFormControl, CapitalizedSelect, CapitalizedMenuItem } from './styles';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -10,16 +10,21 @@ import FormControl from '@material-ui/core/FormControl';
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import FormHelperText from '@material-ui/core/FormHelperText';
+import MenuItem from '@material-ui/core/MenuItem';
 import { KeyboardDatePicker, MuiPickersUtilsProvider  } from '@material-ui/pickers';
 import moment from 'moment';
 import axios from 'axios';
-
+import { TodosData } from '../../../utils/interfaces/todos';
 import DateFnsUtils from '@date-io/date-fns';
+import InputLabel from '@material-ui/core/InputLabel';
 
 interface Props {
   open: boolean;
   closeDialog: () => void;
   createTodo: (data: MainData) => void;
+  isEdit: boolean;
+  editTodo: (data: MainData) => void;
+  prevData: TodosData;
 }
 
 interface MainData {
@@ -27,9 +32,10 @@ interface MainData {
   deadline: Date | null;
   assigned_to: number;
   description: string;
+  state?: string;
 }
 
-export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog, createTodo }) => {
+export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog, createTodo, isEdit, editTodo, prevData }) => {
   const [ isOpen, setOpen ] = useState<boolean>(open);
 
   const [ users, setUsers ] = useState<UsersData[]>([]);
@@ -38,10 +44,15 @@ export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog, createTodo })
   const [ assignedTo, setAssignedTo ] = useState<string>('');
   const [ deadline, setDeadline ] = useState<Date | null>(null);
   const [ description, setDescription ] = useState<string>('');
+  const [ state, setState ] = useState<string | undefined>('');
 
   const handleTitle = (event: any) => {
     setTitle(event.target.value);
   }
+
+  const handleState = (event: any) => {
+    setState(event.target.value);
+  };
 
   const handleDeadline = (date: Date | null) => {
     setDeadline(date);
@@ -66,35 +77,53 @@ export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog, createTodo })
     setAssignedTo('');
   }
 
+  const fill = () => {
+    setTitle(prevData.title);
+    setState(prevData.state);
+    setAssignedTo(prevData.user_id.toString());
+    setDeadline(prevData.deadline);
+    setDescription(prevData.description);
+  }
+
   const close = () => {
-    clear();
     closeDialog();
   }
 
   const confirm = () => {
     if (isDataValid()) {
-      const data = { title, deadline, assigned_to: parseInt(assignedTo), description };
-      clear();
-      createTodo(data);
+      if(!isEdit) {
+        const data = { title, deadline, assigned_to: parseInt(assignedTo.toString()), description };
+        createTodo(data);
+      } else {
+        const data = {id: prevData.id, title, deadline, assigned_to: parseInt(assignedTo.toString()), description, state };
+        editTodo(data);
+      }
       closeDialog();
     }
   }
 
-  const usersId = () => [''].concat(users.map(user => user.id.toString()));
+  const usersId = () => {
+    return [''].concat(users.map(user => user.id.toString()));
+  }
 
   const getOptionLabel = (option: any) => {
     const user = users.find(user => user.id.toString() === option);
     return option && user ? user.user_name : '';
   }
 
-  const renderInput = (params: any) => <TextField {...params} label={labels.assignTo} value='' variant='outlined'/>;
+  const renderInput = (params: any) => {
+    return (
+      <TextField {...params} label={labels.assignTo} value='' variant='outlined'/>
+    );
+  }
   
   useEffect(() => {
     setOpen(open);
     axios.get(`${routes.server}/${routes.users}`).then(res => {
       setUsers(res.data.users);
     });
-  }, [ open ]);
+    isEdit ? fill() : clear();
+  }, [ open, isEdit ]);
 
   return (
     <Dialog
@@ -104,7 +133,7 @@ export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog, createTodo })
       onClose={closeDialog}
       fullWidth
     >
-      <DialogTitle>Add todo</DialogTitle>
+      <DialogTitle>{isEdit ? 'Edit' : 'Add'} todo</DialogTitle>
       <DialogContent>
         <StyledFormControl fullWidth>
           <TextField
@@ -117,7 +146,27 @@ export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog, createTodo })
           ></TextField>
           <FormHelperText>Symbols: {title.length}/{textFields.title.maxLength}</FormHelperText>
         </StyledFormControl>
-
+        {isEdit &&
+          <StyledFormControl fullWidth variant='outlined'>
+            <InputLabel id='selectState'>{labels.state}</InputLabel>
+            <CapitalizedSelect 
+              required 
+              fullWidth 
+              value={state}
+              onChange={handleState}
+              labelId={'selectState'}
+              label={labels.state}
+            >
+            {
+              states.map(stateName => {
+                return (
+                  <CapitalizedMenuItem value={stateName} key={stateName}> { stateName }</CapitalizedMenuItem>
+                );
+              })
+            }
+            </CapitalizedSelect>
+          </StyledFormControl>
+        }
         <FormControl fullWidth>
           <MuiPickersUtilsProvider utils={DateFnsUtils}>
             <KeyboardDatePicker
@@ -136,8 +185,8 @@ export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog, createTodo })
 
         <StyledFormControl fullWidth>
           <Autocomplete
-            value={assignedTo}
             options={usersId()}
+            value={assignedTo}
             onChange={handleAssignedTo}
             getOptionLabel={getOptionLabel}
             renderInput={renderInput}
@@ -163,7 +212,7 @@ export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog, createTodo })
           Cancel
         </Button>
         <Button onClick={confirm} variant='contained' color='primary' disabled={!isDataValid()}>
-          Add
+          {isEdit ? 'Edit' : 'Add'}
         </Button>
       </DialogActions>
     </Dialog>
