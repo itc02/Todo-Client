@@ -10,7 +10,6 @@ import FormControl from '@material-ui/core/FormControl';
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import FormHelperText from '@material-ui/core/FormHelperText';
-import MenuItem from '@material-ui/core/MenuItem';
 import { KeyboardDatePicker, MuiPickersUtilsProvider  } from '@material-ui/pickers';
 import moment from 'moment';
 import axios from 'axios';
@@ -30,7 +29,7 @@ interface Props {
 interface MainData {
   title: string;
   deadline: Date | null;
-  assigned_to: number;
+  userId: number;
   description: string;
   state?: string;
 }
@@ -41,7 +40,7 @@ export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog, createTodo, i
   const [ users, setUsers ] = useState<UsersData[]>([]);
 
   const [ title, setTitle ] = useState<string>('');
-  const [ assignedTo, setAssignedTo ] = useState<string>('');
+  const [ userId, setUserId ] = useState<number>(0);
   const [ deadline, setDeadline ] = useState<Date | null>(null);
   const [ description, setDescription ] = useState<string>('');
   const [ state, setState ] = useState<string | undefined>('');
@@ -59,7 +58,7 @@ export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog, createTodo, i
   }
 
   const handleAssignedTo = (event: any, value: any) => {
-    setAssignedTo(value);
+    setUserId(parseInt(value));
   }
 
   const handleDescription = (event: any) => {
@@ -67,20 +66,20 @@ export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog, createTodo, i
   }
 
   const isDataValid = () => {
-    return title && deadline && assignedTo && description && moment(deadline).isValid();
+    return title && deadline && userId && description && moment(deadline).isValid();
   }
 
   const clear = ()  => {
     setTitle('');
     setDescription('');
     setDeadline(null);
-    setAssignedTo('');
+    setUserId(0);
   }
 
   const fill = () => {
     setTitle(prevData.title);
     setState(prevData.state);
-    setAssignedTo(prevData.user_id.toString());
+    setUserId(prevData.user_id);
     setDeadline(prevData.deadline);
     setDescription(prevData.description);
   }
@@ -92,10 +91,10 @@ export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog, createTodo, i
   const confirm = () => {
     if (isDataValid()) {
       if(!isEdit) {
-        const data = { title, deadline, assigned_to: parseInt(assignedTo.toString()), description };
+        const data = { title, deadline, userId, description };
         createTodo(data);
       } else {
-        const data = {id: prevData.id, title, deadline, assigned_to: parseInt(assignedTo.toString()), description, state };
+        const data = { id: prevData.id, title, deadline, userId, description, state };
         editTodo(data);
       }
       closeDialog();
@@ -186,7 +185,7 @@ export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog, createTodo, i
         <StyledFormControl fullWidth>
           <Autocomplete
             options={usersId()}
-            value={assignedTo}
+            value={userId === 0 ? '' : userId.toString()}
             onChange={handleAssignedTo}
             getOptionLabel={getOptionLabel}
             renderInput={renderInput}

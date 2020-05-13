@@ -37,7 +37,6 @@ export const MainTable:React.FC = () => {
   const [ order, setOrder ] = useState<string>(orders[0]);
 
   const getTodos = (newPer: number, newPage: number) => {
-    console.log(order)
     axios.get(`${routes.server}/${routes.todos}`, {
       params: {
         per: newPer,
@@ -51,22 +50,22 @@ export const MainTable:React.FC = () => {
     });
   }
 
-  const createTodo = ({title, deadline, assigned_to, description}: any) => {
+  const createTodo = ({title, deadline, userId, description}: any) => {
     axios.post(`${routes.server}/${routes.todos}`, {
       title,
       deadline,
-      assigned_to,
+      user_id: userId,
       description,
     }).then(res => {
       getTodos(currentPer, currentPage);
     });
   }
 
-  const editTodo = ({id, title, deadline, assigned_to, description, state}: any) => {
+  const editTodo = ({id, title, deadline, userId, description, state}: any) => {
     axios.put(`${routes.server}/${routes.todos}/${id}`, {
       title,
       deadline,
-      assigned_to,
+      user_id: userId,
       description,
       state
     }).then(res => {
