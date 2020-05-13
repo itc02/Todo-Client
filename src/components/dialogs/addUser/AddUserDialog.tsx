@@ -48,7 +48,11 @@ export const AddUserDialog:React.FC<Props> = ({ open, closeDialog }) => {
 
   useEffect(() => {
     setOpen(open);
-    axios.get(`${routes.server}/${routes.users}/${routes.allUsers}`).then(res => {
+    axios.get(`${routes.server}/${routes.users}`, {
+      params: {
+        without_pagination: true
+      }
+    }).then(res => {
       setUsers(res.data);
     });
   }, [ open ]);

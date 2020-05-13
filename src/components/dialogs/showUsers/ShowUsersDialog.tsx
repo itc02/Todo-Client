@@ -51,10 +51,8 @@ export const ShowUsersDialog:React.FC<Props> = ({ open, closeDialog }) => {
   const deleteUsers = () => {
     axios.delete(`${routes.server}/${routes.users}`, { data: {
       ids: chosenUsers
-    }}).then(res => {
-      setUsers(res.data.users);
-      setTodosNumber(res.data.todos_number);
-      setAllUsersCount(res.data.total_record_count);
+    }}).then(() => {
+      getUsers(currentPer, currentPage);
       setChosenUsers([]);
     });
     
