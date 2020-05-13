@@ -18,7 +18,6 @@ import axios from 'axios';
 import moment from 'moment';
 import Checkbox from '../checkbox/TodoCheckbox';
 import Pagination from '../pagination/TodoPagination';
-import { UsersData } from '../../utils/interfaces/users';
 
 export const MainTable:React.FC = () => {
   const [ openAddDialog, setOpenAddDialog ] = useState<boolean>(false);
@@ -27,7 +26,6 @@ export const MainTable:React.FC = () => {
   const [ isEdit, setIsEdit ] = useState<boolean>(false);
   
   const [ todos, setTodos ] = useState<TodosData[]>([]);
-  const [ users, setUsers ] = useState<UsersData[]>([]);
   const [ currentPer, setPer ] = useState<number>(pagination.rowsOnPage[0]);
   const [ currentPage, setPage ] = useState<number>(1);
   const [ allTodosCount, setAllTodosCount ] = useState<number>(0);
@@ -36,16 +34,6 @@ export const MainTable:React.FC = () => {
   const sortingCriterias = ['title', 'state', 'user_name', 'deadline'];
   const [ sortingCriteria, setSortingCriteria ] = useState<string>(sortingCriterias[0]);
   const [ order, setOrder ] = useState<string>('ASC');
-
-  const getUsers = () => {
-    axios.get(`${routes.server}/${routes.users}`, {
-      params: {
-        without_pagination: true
-      }
-    }).then(res => {
-      setUsers(res.data);
-    })
-  }
 
   const getTodos = (newPer: number, newPage: number) => {
     axios.get(`${routes.server}/${routes.todos}`, {
