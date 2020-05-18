@@ -14,6 +14,7 @@ export const labels = {
   assignTo: 'Assign to',
   description: 'New description',
   user: 'New user',
+  email: 'New email',
   state: 'New state'
 };
 

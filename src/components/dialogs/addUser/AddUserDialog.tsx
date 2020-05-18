@@ -22,28 +22,39 @@ export const AddUserDialog:React.FC<Props> = ({ open, closeDialog }) => {
   const [ isOpen, setOpen ] = useState<boolean>(open);
 
   const [ user, setUser ] = useState<string>('');
+  const [ email, setEmail ] = useState<string>('');
 
   const handleUser = (event: any) => {
     setUser(event.target.value);
   }
 
+  const handleEmail = (event: any) => {
+    setEmail(event.target.value);
+  }
+
   const isDataValid = () => {
-    return user && !users.map(user => user.user_name).includes(user);
+    return user && email && !users.map(user => user.user_name).includes(user);
   }
 
   const close = () => {
-    setUser('');
+    clear();
     closeDialog();
   }
 
   const confirm = () => {
     if(isDataValid()) {
-      setUser('');
+      clear();
       axios.post(`${routes.server}/${routes.users}`, {
-        user_name: user
+        user_name: user,
+        email
       });
       closeDialog();
     }
+  }
+
+  const clear = () => {
+    setUser('');
+    setEmail('');
   }
 
   useEffect(() => {
@@ -77,6 +88,16 @@ export const AddUserDialog:React.FC<Props> = ({ open, closeDialog }) => {
             onChange={handleUser}
           ></TextField>
           <FormHelperText>Symbols: {user.length}/{textFields.user.maxLength}</FormHelperText>
+        </StyledFormControl>
+
+        <StyledFormControl fullWidth>
+          <TextField
+            value={email}
+            label={labels.email}
+            variant='outlined'
+            fullWidth
+            onChange={handleEmail}
+          ></TextField>
         </StyledFormControl>
       </DialogContent>
       <DialogActions>
