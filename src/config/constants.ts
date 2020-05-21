@@ -13,14 +13,11 @@ export const labels = {
   deadline: 'End date',
   assignTo: 'Assign to',
   description: 'New description',
-  user: 'New user'
+  user: 'New user',
+  state: 'New state'
 };
 
-export const states = {
-  new: 'new',
-  inProgress: 'in progress',
-  finished: 'finished'
-};
+export const states = ['new', 'in progress', 'finished'];
 
 export const dateFormats = {
   default: 'MM/DD/YYYY'
