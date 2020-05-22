@@ -12,7 +12,7 @@ import { Options, Title, Border, StyledTableCell, MarginedButton, Arrow } from '
 import { AddTodoDialog } from '../dialogs/addTodo/AddTodoDialog';
 import { AddUserDialog } from '../dialogs/addUser/AddUserDialog';
 import { ShowUsersDialog } from '../dialogs/showUsers/ShowUsersDialog';
-import { routes, pagination, columns, dateFormats, labels, orders, sortingCriterias, searchCriterias } from '../../config/constants';
+import { routes, pagination, columns, dateFormats, orders, sortingCriterias, searchCriterias, titles, buttons } from '../../config/constants';
 import axios from 'axios';
 import moment from 'moment';
 import Checkbox from '../checkbox/TodoCheckbox';
@@ -31,7 +31,7 @@ export const MainTable:React.FC = () => {
   const [ allTodosCount, setAllTodosCount ] = useState<number>(0);
   const [ chosenTodos, setChosenTodos ] = useState<number[]>([]);
 
-  const [ sortingCriteria, setSortingCriteria ] = useState<string>(sortingCriterias[0]);
+  const [ sortingCriteria, setSortingCriteria ] = useState<string>(sortingCriterias.todos[0]);
   const [ order, setOrder ] = useState<string>(orders[0]);
   const [ searchString, setSearchString ] = useState<string>('');
   const [ searchCriteria, setSearchCriteria ] = useState<string>(searchCriterias.todos[0]);
@@ -86,7 +86,7 @@ export const MainTable:React.FC = () => {
 
   const sortTodos = (e: any) => {
     const index = orders.indexOf(order)
-    const newOrder = orders[index == orders.length - 1 ? 0 : index + 1];
+    const newOrder = orders[index === orders.length - 1 ? 0 : index + 1];
     const newCriteria = e.target.id;
     setSortingCriteria(newCriteria);
     setOrder(newOrder);
@@ -104,16 +104,16 @@ export const MainTable:React.FC = () => {
   return (
     <TableContainer component={Paper}>
       <Options>
-        <Title>Todos</Title>
+        <Title>{titles.todos.main}</Title>
         <Filtration 
           filterData={filterTodos}
           columns={columns.todos.slice(1)}
           searchCriterias={searchCriterias.todos}
         />
         <div>
-          <MarginedButton variant='outlined' onClick={() => { setOpenShowUsersDialog(true) }}>All users</MarginedButton>
-          <MarginedButton variant='outlined' onClick={() => { setOpenAddDialog(true); setIsEdit(false) }}>Add todo</MarginedButton>
-          <MarginedButton variant='outlined' onClick={() => { setOpenAddUserDialog(true) }}>Add user</MarginedButton>          
+          <MarginedButton variant='outlined' onClick={() => { setOpenShowUsersDialog(true) }}>{titles.users.all}</MarginedButton>
+          <MarginedButton variant='outlined' onClick={() => { setOpenAddDialog(true); setIsEdit(false) }}>{titles.todos.add}</MarginedButton>
+          <MarginedButton variant='outlined' onClick={() => { setOpenAddUserDialog(true) }}>{titles.users.all}</MarginedButton>          
         </div>
       </Options>
       <Border></Border>
@@ -124,7 +124,7 @@ export const MainTable:React.FC = () => {
               return (
                 <TableCell key={ column }>
                   {index !== 0 &&
-                    <Arrow className={order ? `fa fa-arrow-${order === 'ASC' ? `up` : `down`}` : `fa fa-minus`} onClick={sortTodos} id={sortingCriterias[index - 1]}></Arrow>
+                    <Arrow className={order ? `fa fa-arrow-${order === 'ASC' ? `up` : `down`}` : `fa fa-minus`} onClick={sortTodos} id={sortingCriterias.todos[index - 1]}></Arrow>
                   }
                   { column }
                 </TableCell>
@@ -146,7 +146,7 @@ export const MainTable:React.FC = () => {
                 <TableCell>{ todo.title }</TableCell>
                 <StyledTableCell>{ todo.state }</StyledTableCell>
                 <TableCell>{ todo.user_name }</TableCell>
-                <TableCell>{ moment(todo.deadline).format(dateFormats.default) }</TableCell>
+                <TableCell>{ moment(todo.deadline).format(dateFormats.default.moment) }</TableCell>
               </TableRow>
             )
           })}
@@ -156,10 +156,10 @@ export const MainTable:React.FC = () => {
             <TableCell>
               <Options>
                 <MarginedButton variant='outlined' disabled={chosenTodos.length === 0} onClick={deleteTodos}>
-                  Delete
+                  {buttons.delete}
                 </MarginedButton>
                 <MarginedButton variant='outlined' disabled={chosenTodos.length !== 1} onClick={() => { setOpenAddDialog(true); setIsEdit(true) }} >
-                  Edit
+                  {titles.edit}
                 </MarginedButton>
               </Options>
             </TableCell>

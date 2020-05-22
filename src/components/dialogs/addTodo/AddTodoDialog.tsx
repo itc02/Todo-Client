@@ -1,6 +1,6 @@
 import React, { useState, useEffect} from 'react';
 import { UsersData } from '../../../utils/interfaces/users';
-import { routes, labels, textFields, states } from '../../../config/constants';
+import { routes, labels, textFields, states, dateFormats, titles, helpers, buttons } from '../../../config/constants';
 import { DialogTitle, Transition, StyledFormControl, CapitalizedSelect, CapitalizedMenuItem } from './styles';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -132,7 +132,7 @@ export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog, createTodo, i
       onClose={closeDialog}
       fullWidth
     >
-      <DialogTitle>{isEdit ? 'Edit' : 'Add'} todo</DialogTitle>
+      <DialogTitle>{isEdit ? titles.todos.edit : titles.todos.add}</DialogTitle>
       <DialogContent>
         <StyledFormControl fullWidth>
           <TextField
@@ -143,7 +143,7 @@ export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog, createTodo, i
             inputProps={{ maxLength: textFields.title.maxLength }}
             onChange={handleTitle}
           ></TextField>
-          <FormHelperText>Symbols: {title.length}/{textFields.title.maxLength}</FormHelperText>
+          <FormHelperText>{helpers.symbol}: {title.length}/{textFields.title.maxLength}</FormHelperText>
         </StyledFormControl>
         {isEdit &&
           <StyledFormControl fullWidth variant='outlined'>
@@ -172,12 +172,11 @@ export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog, createTodo, i
               disableToolbar
               inputVariant='outlined'
               variant='inline'
-              format='MM/dd/yyyy'
+              format={dateFormats.default.datePicker}
               margin='normal'
               label={labels.deadline}
               value={deadline}
               onChange={handleDeadline}
-              KeyboardButtonProps={{ 'aria-label': 'change date' }}
             />
           </MuiPickersUtilsProvider>
         </FormControl>
@@ -203,15 +202,15 @@ export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog, createTodo, i
             onChange={handleDescription}
             inputProps={{ maxLength: textFields.description.maxLength}}
           ></TextField>
-          <FormHelperText>Symbols: {description.length}/{textFields.description.maxLength}</FormHelperText>
+          <FormHelperText>{helpers.symbol}: {description.length}/{textFields.description.maxLength}</FormHelperText>
         </StyledFormControl>
       </DialogContent>
       <DialogActions>
         <Button onClick={close} variant='contained' color='secondary'>
-          Cancel
+          {buttons.cancel}
         </Button>
         <Button onClick={confirm} variant='contained' color='primary' disabled={!isDataValid()}>
-          {isEdit ? 'Edit' : 'Add'}
+          {isEdit ? titles.edit : titles.add}
         </Button>
       </DialogActions>
     </Dialog>
