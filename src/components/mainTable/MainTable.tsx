@@ -12,24 +12,31 @@ import { Options, Title, Border, StyledTableCell, MarginedButton, Arrow } from '
 import { AddTodoDialog } from '../dialogs/addTodo/AddTodoDialog';
 import { AddUserDialog } from '../dialogs/addUser/AddUserDialog';
 import { ShowUsersDialog } from '../dialogs/showUsers/ShowUsersDialog';
+import { DeleteItems } from '../dialogs/deleteItems/DeleteItems';
 import { routes, pagination, columns, dateFormats, orders, sortingCriterias, searchCriterias, titles, buttons } from '../../config/constants';
 import axios from 'axios';
 import moment from 'moment';
-import Checkbox from '../checkbox/TodoCheckbox';
+import UnitCheckbox from '../checkbox/UnitCheckbox';
+import MainCheckbox from '../checkbox/MainCheckbox';
 import Pagination from '../pagination/TodoPagination';
 import Filtration from '../filtration/Filtration';
+import { useGlobalState } from '../../utils/globalState/useGlobalState';
+import { ActionTypes } from '../../utils/globalState/actions';
 
 export const MainTable:React.FC = () => {
+  const { state, dispatch } = useGlobalState();
+  const { selectedTodos } = state;
+
   const [ openAddDialog, setOpenAddDialog ] = useState<boolean>(false);
   const [ openAddUserDialog, setOpenAddUserDialog ] = useState<boolean>(false);
   const [ openShowUsersDialog, setOpenShowUsersDialog ] = useState<boolean>(false);
+  const [ openDeleteItemsDialog, setOpenDeleteItemsDialog ] = useState<boolean>(false);
   const [ isEdit, setIsEdit ] = useState<boolean>(false);
   
   const [ todos, setTodos ] = useState<TodosData[]>([]);
   const [ currentPer, setPer ] = useState<number>(pagination.rowsOnPage[0]);
   const [ currentPage, setPage ] = useState<number>(1);
   const [ allTodosCount, setAllTodosCount ] = useState<number>(0);
-  const [ chosenTodos, setChosenTodos ] = useState<number[]>([]);
 
   const [ sortingCriteria, setSortingCriteria ] = useState<string>(sortingCriterias.todos[0]);
   const [ order, setOrder ] = useState<string>(orders[0]);
@@ -75,13 +82,15 @@ export const MainTable:React.FC = () => {
     })
   }
 
-  const deleteTodos = () => {
-    axios.delete(`${routes.server}/${routes.todos}`, { data: {
-      ids: chosenTodos
-    }}).then(() => {
-      getTodos(currentPer, currentPage);
-    });
-    setChosenTodos([]);
+  const deleteTodos = (isDelete: boolean) => {
+    if(isDelete) {
+      axios.delete(`${routes.server}/${routes.todos}`, { data: {
+        ids: selectedTodos
+      }}).then(() => {
+        getTodos(currentPer, currentPage);
+        dispatch({type: ActionTypes.CLEAR_TODOS})
+      });
+    }
   }
 
   const sortTodos = (e: any) => {
@@ -113,7 +122,7 @@ export const MainTable:React.FC = () => {
         <div>
           <MarginedButton variant='outlined' onClick={() => { setOpenShowUsersDialog(true) }}>{titles.users.all}</MarginedButton>
           <MarginedButton variant='outlined' onClick={() => { setOpenAddDialog(true); setIsEdit(false) }}>{titles.todos.add}</MarginedButton>
-          <MarginedButton variant='outlined' onClick={() => { setOpenAddUserDialog(true) }}>{titles.users.all}</MarginedButton>          
+          <MarginedButton variant='outlined' onClick={() => { setOpenAddUserDialog(true) }}>{titles.users.add}</MarginedButton>
         </div>
       </Options>
       <Border></Border>
@@ -123,8 +132,19 @@ export const MainTable:React.FC = () => {
             {columns.todos.map((column: string, index: number) => {
               return (
                 <TableCell key={ column }>
+                  {index === 0 &&
+                    <MainCheckbox 
+                      setAllAction={ActionTypes.SET_ALL_TODOS}
+                      clearAllAction={ActionTypes.CLEAR_TODOS}
+                      route={routes.todos}
+                    />
+                  }
                   {index !== 0 &&
-                    <Arrow className={order ? `fa fa-arrow-${order === 'ASC' ? `up` : `down`}` : `fa fa-minus`} onClick={sortTodos} id={sortingCriterias.todos[index - 1]}></Arrow>
+                    <Arrow 
+                      className={order ? `fa fa-arrow-${order === 'ASC' ? `up` : `down`}` : `fa fa-minus`} 
+                      onClick={sortTodos} 
+                      id={sortingCriterias.todos[index - 1]}
+                    />
                   }
                   { column }
                 </TableCell>
@@ -137,10 +157,11 @@ export const MainTable:React.FC = () => {
             return (
               <TableRow key={ todo.id }>
                 <TableCell style={{width: '1px'}}>
-                  <Checkbox 
-                    itemId={todo.id} 
-                    selectedItems={chosenTodos} 
-                    setSelectedItems={setChosenTodos}
+                  <UnitCheckbox 
+                    itemId={todo.id}
+                    removeAction={ActionTypes.REMOVE_TODO}
+                    addAction={ActionTypes.ADD_TODO}
+                    selectedItems={selectedTodos}
                   />
                 </TableCell>
                 <TableCell>{ todo.title }</TableCell>
@@ -155,10 +176,10 @@ export const MainTable:React.FC = () => {
           <TableRow>
             <TableCell>
               <Options>
-                <MarginedButton variant='outlined' disabled={chosenTodos.length === 0} onClick={deleteTodos}>
+                <MarginedButton variant='outlined' disabled={selectedTodos.length === 0} onClick={() => { setOpenDeleteItemsDialog(true) }}>
                   {buttons.delete}
                 </MarginedButton>
-                <MarginedButton variant='outlined' disabled={chosenTodos.length !== 1} onClick={() => { setOpenAddDialog(true); setIsEdit(true) }} >
+                <MarginedButton variant='outlined' disabled={selectedTodos.length !== 1} onClick={() => { setOpenAddDialog(true); setIsEdit(true) }} >
                   {titles.edit}
                 </MarginedButton>
               </Options>
@@ -185,7 +206,7 @@ export const MainTable:React.FC = () => {
         createTodo={createTodo}
         isEdit={isEdit}
         editTodo={editTodo}
-        prevData={todos.find(todo => todo.id === chosenTodos[0]) || todos[0]}
+        id={selectedTodos[0]}
       />
       <AddUserDialog
         open={openAddUserDialog}
@@ -194,6 +215,11 @@ export const MainTable:React.FC = () => {
       <ShowUsersDialog
         open={openShowUsersDialog}
         closeDialog={() => { setOpenShowUsersDialog(false) }}
+      />
+      <DeleteItems
+        open={openDeleteItemsDialog}
+        closeDialog={() => { setOpenDeleteItemsDialog(false) }}
+        handleDelete={ deleteTodos }
       />
     </TableContainer>
   );

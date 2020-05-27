@@ -13,7 +13,6 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import { KeyboardDatePicker, MuiPickersUtilsProvider  } from '@material-ui/pickers';
 import moment from 'moment';
 import axios from 'axios';
-import { TodosData } from '../../../utils/interfaces/todos';
 import DateFnsUtils from '@date-io/date-fns';
 import InputLabel from '@material-ui/core/InputLabel';
 
@@ -23,7 +22,7 @@ interface Props {
   createTodo: (data: MainData) => void;
   isEdit: boolean;
   editTodo: (data: MainData) => void;
-  prevData: TodosData;
+  id: number
 }
 
 interface MainData {
@@ -34,7 +33,7 @@ interface MainData {
   state?: string;
 }
 
-export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog, createTodo, isEdit, editTodo, prevData }) => {
+export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog, createTodo, isEdit, editTodo, id }) => {
   const [ isOpen, setOpen ] = useState<boolean>(open);
 
   const [ users, setUsers ] = useState<UsersData[]>([]);
@@ -77,11 +76,19 @@ export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog, createTodo, i
   }
 
   const fill = () => {
-    setTitle(prevData.title);
-    setState(prevData.state);
-    setUserId(prevData.user_id);
-    setDeadline(prevData.deadline);
-    setDescription(prevData.description);
+    axios.get(`${routes.server}/${routes.todos}`, {
+      params: {
+        id
+      }
+    }).then(res => {
+      const { title, state, user_id, deadline, description } = res.data;
+      setTitle(title);
+      setState(state);
+      setUserId(user_id);
+      setDeadline(deadline);
+      setDescription(description);
+    });
+    
   }
 
   const close = () => {
@@ -94,7 +101,7 @@ export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog, createTodo, i
         const data = { title, deadline, userId, description };
         createTodo(data);
       } else {
-        const data = { id: prevData.id, title, deadline, userId, description, state };
+        const data = { id, title, deadline, userId, description, state };
         editTodo(data);
       }
       closeDialog();
@@ -123,7 +130,7 @@ export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog, createTodo, i
     });
     isEdit ? fill() : clear();
   }, [ open, isEdit ]);
-
+  
   return (
     <Dialog
       open={isOpen}
