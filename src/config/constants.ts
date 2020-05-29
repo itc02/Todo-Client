@@ -1,6 +1,9 @@
 export const states = ['new', 'in progress', 'finished'];
 
-export const orders = ['none', 'ASC', 'DESC'];
+export const sortingOrders = {
+  orders: ['none', 'ASC', 'DESC'],
+  defaultOrder: 'none'
+};
 
 export const routes = {
   server: 'http://localhost:3000',
@@ -63,12 +66,15 @@ export const helpers = {
 }
 
 export const pagination = {
-  rowsOnPage: [5, 10, 20]
+  rowsOnPage: [5, 10, 20],
+  defaultPage: 1,
+  defaultPer: 5
 };
 
 
 export const sortingCriterias = {
-  todos: ['title', 'state', 'user_name', 'deadline']
+  todos: ['title', 'state', 'user_name', 'deadline'],
+  defaultTodoCriteria: 'title'
 };
 
 export const columns = {
@@ -76,8 +82,10 @@ export const columns = {
   users: ['', 'Name', 'Number of todos']
 };
 
-export const searchCriterias = {
+export const filterCriterias = {
   todos: ['title', 'state', 'user_name', 'deadline'],
-  users: ['user_name']
+  users: ['user_name'],
+  defaultTodoCriteria: 'title',
+  defaultUserCriteria: 'user_name'
 };
 

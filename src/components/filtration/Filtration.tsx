@@ -7,21 +7,23 @@ import { FilterOptions, Arrow } from './styles';
 import FormControl from '@material-ui/core/FormControl';
 
 interface Props {
-  filterData: (searchString: string, searchCriteria: string) => void;
+  filterData: (searchString: string, filterCriteria: string) => void;
   columns: string[];
-  searchCriterias: string[];
+  filterCriterias: string[];
+  defaultFilterCriteria: string;
+  defaultFilterLabel: string;
 }
 
-const Filtration = ({ filterData, columns, searchCriterias }: Props) => {
+const Filtration = ({ filterData, columns, filterCriterias, defaultFilterCriteria, defaultFilterLabel }: Props) => {
   const [ anchorEl, setAnchorEl ] = React.useState<null | HTMLElement>(null);
 
   const [ searchString, setSearchString ] = useState<string>('');
-  const [ searchCriteria, setSearchCriteria ] = useState<string>(searchCriterias[0]);
-  const [ searchLabel, setSearchLabel ] = useState<string>(columns[0]);
+  const [ filterCriteria, setFilterCriteria ] = useState<string>(defaultFilterCriteria);
+  const [ filterLabel, setFilterLabel ] = useState<string>(defaultFilterLabel);
 
   const filter = (event: any) => {
     const newSearchString = event.target.value;
-    filterData(newSearchString, searchCriteria);
+    filterData(newSearchString, filterCriteria);
     setSearchString(newSearchString);
   }
 
@@ -30,10 +32,10 @@ const Filtration = ({ filterData, columns, searchCriterias }: Props) => {
   }
 
   const handleClose = (event: any) => {
-    const newSearchCriteria = event.target.id;
-    if(newSearchCriteria) {
-      setSearchCriteria(newSearchCriteria);
-      setSearchLabel(columns[searchCriterias.indexOf(newSearchCriteria)]);
+    const newFilterCriteria = event.target.id;
+    if(newFilterCriteria) {
+      setFilterCriteria(newFilterCriteria);
+      setFilterLabel(columns[filterCriterias.indexOf(newFilterCriteria)]);
     }
     setAnchorEl(null);
   }
@@ -46,7 +48,7 @@ const Filtration = ({ filterData, columns, searchCriterias }: Props) => {
           onChange={filter}
           variant='outlined'
           fullWidth
-          label={labels.filter + searchLabel}
+          label={labels.filter + filterLabel}
           inputProps={{
             style: {
               height: 0
@@ -70,7 +72,7 @@ const Filtration = ({ filterData, columns, searchCriterias }: Props) => {
       >
         {columns.map((criteria: string, index: number) => {
           return (
-            <MenuItem onClick={handleClose} key={criteria} id={searchCriterias[index]}>{ criteria }</MenuItem>
+            <MenuItem onClick={handleClose} key={criteria} id={filterCriterias[index]}>{ criteria }</MenuItem>
           )
         })}
       </Menu>
