@@ -12,8 +12,7 @@ import { Options, Title, Border, StyledTableCell, MarginedButton, Arrow } from '
 import { AddTodoDialog } from '../dialogs/addTodo/AddTodoDialog';
 import { AddUserDialog } from '../dialogs/addUser/AddUserDialog';
 import { ShowUsersDialog } from '../dialogs/showUsers/ShowUsersDialog';
-import { DeleteItems } from '../dialogs/deleteItems/DeleteItems';
-import { routes, pagination, columns, dateFormats, orders, sortingCriterias, searchCriterias, titles, buttons } from '../../config/constants';
+import { routes, columns, dateFormats, sortingOrders, sortingCriterias, filterCriterias, titles, buttons, pagination } from '../../config/constants';
 import axios from 'axios';
 import moment from 'moment';
 import UnitCheckbox from '../checkbox/UnitCheckbox';
@@ -22,6 +21,7 @@ import Pagination from '../pagination/TodoPagination';
 import Filtration from '../filtration/Filtration';
 import { useGlobalState } from '../../utils/globalState/useGlobalState';
 import { ActionTypes } from '../../utils/globalState/actions';
+import { DeleteItems } from '../dialogs/deleteItems/DeleteItems';
 
 export const MainTable:React.FC = () => {
   const { state, dispatch } = useGlobalState();
@@ -34,14 +34,14 @@ export const MainTable:React.FC = () => {
   const [ isEdit, setIsEdit ] = useState<boolean>(false);
   
   const [ todos, setTodos ] = useState<TodosData[]>([]);
-  const [ currentPer, setPer ] = useState<number>(pagination.rowsOnPage[0]);
-  const [ currentPage, setPage ] = useState<number>(1);
+  const [ currentPer, setPer ] = useState<number>(pagination.defaultPer);
+  const [ currentPage, setPage ] = useState<number>(pagination.defaultPage);
   const [ allTodosCount, setAllTodosCount ] = useState<number>(0);
 
-  const [ sortingCriteria, setSortingCriteria ] = useState<string>(sortingCriterias.todos[0]);
-  const [ order, setOrder ] = useState<string>(orders[0]);
+  const [ sortingCriteria, setSortingCriteria ] = useState<string>(sortingCriterias.defaultTodoCriteria);
+  const [ order, setOrder ] = useState<string>(sortingOrders.defaultOrder);
   const [ searchString, setSearchString ] = useState<string>('');
-  const [ searchCriteria, setSearchCriteria ] = useState<string>(searchCriterias.todos[0]);
+  const [ filterCriteria, setFilterCriteria ] = useState<string>(filterCriterias.defaultTodoCriteria);
 
   const getTodos = (newPer: number, newPage: number) => {
     axios.get(`${routes.server}/${routes.todos}`, {
@@ -51,7 +51,7 @@ export const MainTable:React.FC = () => {
         order,
         sorting_criteria: sortingCriteria,
         search_string: searchString,
-        search_criteria: searchCriteria
+        filter_criteria: filterCriteria
       }
     }).then(res => {
       setTodos(res.data.todos);
@@ -94,6 +94,7 @@ export const MainTable:React.FC = () => {
   }
 
   const sortTodos = (e: any) => {
+    const { orders } = sortingOrders;
     const index = orders.indexOf(order)
     const newOrder = orders[index === orders.length - 1 ? 0 : index + 1];
     const newCriteria = e.target.id;
@@ -103,7 +104,7 @@ export const MainTable:React.FC = () => {
 
   const filterTodos = (newSearchString: string, newSearchCriteria: string) => {
     setSearchString(newSearchString);
-    setSearchCriteria(newSearchCriteria);
+    setFilterCriteria(newSearchCriteria);
   }
 
   useEffect(() => {
@@ -117,7 +118,9 @@ export const MainTable:React.FC = () => {
         <Filtration 
           filterData={filterTodos}
           columns={columns.todos.slice(1)}
-          searchCriterias={searchCriterias.todos}
+          filterCriterias={filterCriterias.todos}
+          defaultFilterCriteria={'title'}
+          defaultFilterLabel={'Title'}
         />
         <div>
           <MarginedButton variant='outlined' onClick={() => { setOpenShowUsersDialog(true) }}>{titles.users.all}</MarginedButton>
