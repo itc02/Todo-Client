@@ -47,7 +47,7 @@ export const columns = {
   users: ['', 'Name', 'Number of todos']
 };
 
-export const searchCriterias = {
+export const filterCriterias = {
   todos: ['title', 'state', 'user_name', 'deadline'],
   users: ['user_name']
 };

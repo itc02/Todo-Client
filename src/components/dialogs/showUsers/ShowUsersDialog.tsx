@@ -12,7 +12,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TableFooter from '@material-ui/core/TableFooter';
 import Paper from '@material-ui/core/Paper';
-import { routes, pagination, searchCriterias, columns } from '../../../config/constants';
+import { routes, pagination, filterCriterias, columns } from '../../../config/constants';
 import { Transition } from '../addTodo/styles';
 import { UsersData } from '../../../utils/interfaces/users';
 import Checkbox from '../../checkbox/TodoCheckbox';
@@ -34,11 +34,11 @@ export const ShowUsersDialog:React.FC<Props> = ({ open, closeDialog }) => {
   const [ isOpen, setOpen ] = useState<boolean>(open);
   const [ chosenUsers, setChosenUsers ] = useState<number[]>([]);
 
-  const [ currentPer, setPer ] = useState<number>(pagination.rowsOnPage[0]);
+  const [ currentPer, setPer ] = useState<number>(5);
   const [ currentPage, setPage ] = useState<number>(1);
 
   const [ searchString, setSearchString ] = useState<string>('');
-  const [ searchCriteria, setSearchCriteria ] = useState<string>(searchCriterias.users[0]);
+  const [ filterCriteria, setFilterCriteria ] = useState<string>('user_name');
 
   const getUsers = (newPer: number, newPage: number) => {
     axios.get(`${routes.server}/${routes.users}`, {
@@ -46,7 +46,7 @@ export const ShowUsersDialog:React.FC<Props> = ({ open, closeDialog }) => {
         per: newPer,
         page: newPage,
         search_string: searchString,
-        search_criteria: searchCriteria
+        search_criteria: filterCriteria
       }
     }).then(res => {
       setUsers(res.data.users);
@@ -67,7 +67,7 @@ export const ShowUsersDialog:React.FC<Props> = ({ open, closeDialog }) => {
 
   const filterUsers = (newSearchString: string, newSearchCriteria: string) => {
     setSearchString(newSearchString);
-    setSearchCriteria(newSearchCriteria);
+    setFilterCriteria(newSearchCriteria);
   }
 
   const close = () => {
@@ -100,7 +100,9 @@ export const ShowUsersDialog:React.FC<Props> = ({ open, closeDialog }) => {
         <Filtration
           filterData={filterUsers}
           columns={columns.users.slice(1, -1)}
-          searchCriterias={searchCriterias.users}
+          filterCriterias={filterCriterias.users}
+          defaultFilterCriteria={'user_name'}
+          defaultFilterLabel={'Name'}
         />
         <TableContainer component={Paper}>
           <Table>
