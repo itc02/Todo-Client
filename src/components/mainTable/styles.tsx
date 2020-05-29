@@ -4,7 +4,6 @@ import Button from '@material-ui/core/Button';
 
 export const Options = styled.div`
   display: flex;
-  justify-content: space-between;
   align-items: center;
   margin-left: 16px;
   margin-right: 16px; 
@@ -12,6 +11,7 @@ export const Options = styled.div`
 
 export const Title = styled.h1`
   font-family: sans-serif;
+  margin-right: 15px;
 `;
 
 export const Border = styled.hr`

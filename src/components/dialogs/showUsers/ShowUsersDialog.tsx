@@ -12,12 +12,14 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TableFooter from '@material-ui/core/TableFooter';
 import Paper from '@material-ui/core/Paper';
-import { routes, pagination } from '../../../config/constants';
+import { routes, pagination, filterCriterias, columns } from '../../../config/constants';
 import { Transition } from '../addTodo/styles';
 import { UsersData } from '../../../utils/interfaces/users';
 import Checkbox from '../../checkbox/TodoCheckbox';
 import Pagination from '../../pagination/TodoPagination';
+import Filtration from '../../filtration/Filtration';
 import axios from 'axios';
+import { Options } from '../../mainTable/styles';
 
 interface Props {
   open: boolean;
@@ -32,14 +34,19 @@ export const ShowUsersDialog:React.FC<Props> = ({ open, closeDialog }) => {
   const [ isOpen, setOpen ] = useState<boolean>(open);
   const [ chosenUsers, setChosenUsers ] = useState<number[]>([]);
 
-  const [ currentPer, setPer ] = useState<number>(pagination.rowsOnPage[0]);
+  const [ currentPer, setPer ] = useState<number>(5);
   const [ currentPage, setPage ] = useState<number>(1);
+
+  const [ searchString, setSearchString ] = useState<string>('');
+  const [ filterCriteria, setFilterCriteria ] = useState<string>('user_name');
 
   const getUsers = (newPer: number, newPage: number) => {
     axios.get(`${routes.server}/${routes.users}`, {
       params: {
         per: newPer,
-        page: newPage
+        page: newPage,
+        search_string: searchString,
+        search_criteria: filterCriteria
       }
     }).then(res => {
       setUsers(res.data.users);
@@ -58,6 +65,11 @@ export const ShowUsersDialog:React.FC<Props> = ({ open, closeDialog }) => {
     
   }
 
+  const filterUsers = (newSearchString: string, newSearchCriteria: string) => {
+    setSearchString(newSearchString);
+    setFilterCriteria(newSearchCriteria);
+  }
+
   const close = () => {
     closeDialog();
   }
@@ -71,6 +83,10 @@ export const ShowUsersDialog:React.FC<Props> = ({ open, closeDialog }) => {
     getUsers(currentPer, currentPage);
   }, [ open ]);
   
+  useEffect(() => {
+    getUsers(currentPer, currentPage);
+  }, [searchString]);
+
   return(
     <Dialog
       open={isOpen}
@@ -81,13 +97,23 @@ export const ShowUsersDialog:React.FC<Props> = ({ open, closeDialog }) => {
     >
       <DialogTitle>All users</DialogTitle>
       <DialogContent>
+        <Filtration
+          filterData={filterUsers}
+          columns={columns.users.slice(1, -1)}
+          filterCriterias={filterCriterias.users}
+          defaultFilterCriteria={'user_name'}
+          defaultFilterLabel={'Name'}
+        />
         <TableContainer component={Paper}>
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell></TableCell>
-                <TableCell>Name</TableCell>
-                <TableCell>Number of todos</TableCell>
+                {columns.users.map(column => {
+                  return (
+                    <TableCell key={column}>{ column
+                       }</TableCell>
+                  )
+                })}
               </TableRow>
             </TableHead>
             <TableBody>
