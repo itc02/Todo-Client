@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Checkbox from '@material-ui/core/Checkbox';
-import { routes } from '../../config/constants';
+import { routes } from '../../utils/staticData/enums';
 import axios from 'axios';
 import { useGlobalState } from '../../utils/globalState/useGlobalState';
 import { ActionTypes } from '../../utils/globalState/actions';

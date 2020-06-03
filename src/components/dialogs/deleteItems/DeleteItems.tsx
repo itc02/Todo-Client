@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions';
-import { buttons } from '../../../config/constants';
+import { buttons } from '../../../utils/staticData/enums';
 import { Transition } from '../addTodo/styles';
 import Button from '@material-ui/core/Button';
 import { Question } from './styles';

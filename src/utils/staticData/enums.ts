@@ -11,7 +11,7 @@ export enum labels {
   description = 'New description',
   user = 'New user',
   email = 'New email',
-  filter = 'Filter by = ',
+  filter = 'Filter by: ',
   state = 'New state'
 };
 
