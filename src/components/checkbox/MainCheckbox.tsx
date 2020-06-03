@@ -31,7 +31,6 @@ const MainCheckbox:React.FC<Props> = ({ setAllAction, clearAllAction, route  }) 
         all_todos_ids: true
       }
     }).then(res => {
-      console.log(res.data)
       setItemsId(res.data);
     });
   }, []);
