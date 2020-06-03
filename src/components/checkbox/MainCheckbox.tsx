@@ -28,7 +28,7 @@ const MainCheckbox:React.FC<Props> = ({ setAllAction, clearAllAction, route  }) 
   useEffect(() => {
     axios.get(`${routes.server}/${route}`, {
       params: {
-        all_todos_id: true
+        all_todos_ids: true
       }
     }).then(res => {
       console.log(res.data)
