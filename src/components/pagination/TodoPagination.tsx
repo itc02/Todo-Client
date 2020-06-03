@@ -2,7 +2,7 @@ import React from 'react';
 import { StyledPagination } from './styles';
 import Select from '@material-ui/core/Select';
 import Pagination from '@material-ui/lab/Pagination';
-import { pagination } from '../../config/constants';
+import { pagination } from '../../utils/staticData/constants';
 import MenuItem from '@material-ui/core/MenuItem';
 
 interface Props {
