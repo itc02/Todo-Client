@@ -1,6 +1,7 @@
 import React, { useState, useEffect} from 'react';
 import { UsersData } from '../../../utils/interfaces/users';
-import { routes, labels, textFields, states, dateFormats, titles, helpers, buttons } from '../../../config/constants';
+import { textFields, states, titles, } from '../../../utils/staticData/constants';
+import { routes, labels, helpers, buttons, dateFormats } from '../../../utils/staticData/enums';
 import { DialogTitle, Transition, StyledFormControl, CapitalizedSelect, CapitalizedMenuItem } from './styles';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -179,7 +180,7 @@ export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog, createTodo, i
               disableToolbar
               inputVariant='outlined'
               variant='inline'
-              format={dateFormats.default.datePicker}
+              format={dateFormats.datePicker}
               margin='normal'
               label={labels.deadline}
               value={deadline}

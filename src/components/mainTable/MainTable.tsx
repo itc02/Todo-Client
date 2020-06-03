@@ -12,7 +12,8 @@ import { Options, Title, Border, StyledTableCell, MarginedButton, Arrow } from '
 import { AddTodoDialog } from '../dialogs/addTodo/AddTodoDialog';
 import { AddUserDialog } from '../dialogs/addUser/AddUserDialog';
 import { ShowUsersDialog } from '../dialogs/showUsers/ShowUsersDialog';
-import { routes, columns, dateFormats, sortingOrders, sortingCriterias, filterCriterias, titles, buttons, pagination } from '../../config/constants';
+import { columns, sortingOrders, sortingCriterias, filterCriterias, titles, pagination } from '../../utils/staticData/constants';
+import { routes, dateFormats, buttons } from '../../utils/staticData/enums';
 import axios from 'axios';
 import moment from 'moment';
 import UnitCheckbox from '../checkbox/UnitCheckbox';
@@ -170,7 +171,7 @@ export const MainTable:React.FC = () => {
                 <TableCell>{ todo.title }</TableCell>
                 <StyledTableCell>{ todo.state }</StyledTableCell>
                 <TableCell>{ todo.user_name }</TableCell>
-                <TableCell>{ moment(todo.deadline).format(dateFormats.default.moment) }</TableCell>
+                <TableCell>{ moment(todo.deadline).format(dateFormats.moment) }</TableCell>
               </TableRow>
             )
           })}

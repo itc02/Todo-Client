@@ -1,16 +1,3 @@
-export const states = ['new', 'in progress', 'finished'];
-
-export const sortingOrders = {
-  orders: ['none', 'ASC', 'DESC'],
-  defaultOrder: 'none'
-};
-
-export const routes = {
-  server: 'http://localhost:3000',
-  todos: 'todos',
-  users: 'users'
-};
-
 export const textFields = {
   title: {
     maxLength: 32
@@ -24,23 +11,6 @@ export const textFields = {
   }
 };
 
-export const labels = {
-  title: 'New title',
-  deadline: 'End date',
-  assignTo: 'Assign to',
-  description: 'New description',
-  user: 'New user',
-  email: 'New email',
-  filter: 'Filter by: ',
-  state: 'New state'
-};
-
-export const dateFormats = {
-  default: {
-    moment: 'MM/DD/YYYY',
-    datePicker: 'MM/dd/yyyy'
-  }
-};
 
 export const titles = {
   edit: 'Edit',
@@ -56,20 +26,6 @@ export const titles = {
   }
 }
 
-export const buttons = {
-  cancel: 'Cancel',
-  delete: 'Delete'
-}
-
-export const helpers = {
-  symbol: 'Symbols'
-}
-
-export const pagination = {
-  rowsOnPage: [5, 10, 20],
-  defaultPage: 1,
-  defaultPer: 5
-};
 
 
 export const sortingCriterias = {
@@ -88,4 +44,19 @@ export const filterCriterias = {
   defaultTodoCriteria: 'title',
   defaultUserCriteria: 'user_name'
 };
+
+export const states = ['new', 'in progress', 'finished'];
+
+export const sortingOrders = {
+  orders: ['none', 'ASC', 'DESC'],
+  defaultOrder: 'none'
+}
+
+
+export const pagination = {
+  rowsOnPage: [5, 10, 20],
+  defaultPage: 1,
+  defaultPer: 5
+};
+
 
