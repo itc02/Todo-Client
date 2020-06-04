@@ -16,7 +16,7 @@ import { columns, sortingOrders, sortingCriterias, filterCriterias, pagination }
 import { routes } from '../../utils/staticData/enums';
 import axios from 'axios';
 import moment from 'moment';
-import UnitCheckbox from '../checkbox/UnitCheckbox';
+import CustomCheckbox from '../checkbox/CustomCheckbox';
 import MainCheckbox from '../checkbox/MainCheckbox';
 import Pagination from '../pagination/TodoPagination';
 import Filtration from '../filtration/Filtration';
@@ -162,7 +162,7 @@ export const MainTable:React.FC = () => {
             return (
               <TableRow key={ todo.id }>
                 <TableCell style={{width: '1px'}}>
-                  <UnitCheckbox 
+                  <CustomCheckbox 
                     itemId={todo.id}
                     removeAction={ActionTypes.REMOVE_TODO}
                     addAction={ActionTypes.ADD_TODO}

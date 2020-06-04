@@ -16,7 +16,7 @@ import { filterCriterias, columns, pagination } from '../../../utils/staticData/
 import { routes } from '../../../utils/staticData/enums';
 import { Transition } from '../addTodo/styles';
 import { UsersData } from '../../../utils/interfaces/users';
-import UnitCheckbox from '../../checkbox/UnitCheckbox';
+import CustomCheckbox from '../../checkbox/CustomCheckbox';
 import Pagination from '../../pagination/TodoPagination';
 import Filtration from '../../filtration/Filtration';
 import axios from 'axios';
@@ -134,7 +134,7 @@ export const ShowUsersDialog:React.FC<Props> = ({ open, closeDialog }) => {
                 return(
                   <TableRow key={user.id}>
                     <TableCell>
-                      <UnitCheckbox 
+                      <CustomCheckbox 
                         itemId={user.id} 
                         isDisabled={todosNumber[index] !== 0}
                         removeAction={ActionTypes.REMOVE_USER}

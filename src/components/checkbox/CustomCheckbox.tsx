@@ -11,7 +11,7 @@ interface Props {
   selectedItems: number[];
 }
 
-const UnitCheckbox: React.FC<Props> = ({ itemId, isDisabled, removeAction, addAction, selectedItems }) => {
+const CustomCheckbox: React.FC<Props> = ({ itemId, isDisabled, removeAction, addAction, selectedItems }) => {
   const { dispatch } = useGlobalState();
 
   const changeCheckboxState = (event: any) => {
@@ -33,4 +33,4 @@ const UnitCheckbox: React.FC<Props> = ({ itemId, isDisabled, removeAction, addAc
   );
 }
 
-export default UnitCheckbox;
+export default CustomCheckbox;
