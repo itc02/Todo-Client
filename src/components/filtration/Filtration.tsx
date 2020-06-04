@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import TextField from '@material-ui/core/TextField';
-import { labels } from '../../config/constants';
+import { labels } from '../../utils/staticData/enums';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import { FilterOptions, Arrow } from './styles';

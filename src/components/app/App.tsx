@@ -1,10 +1,12 @@
 import React from 'react';
 import { MainTable } from '../mainTable/MainTable';
-import './App.css';
+import { Provider } from '../../utils/globalState/Provider';
 
 const App: React.FC = () => {
   return (
-   <MainTable />
+    <Provider>
+      <MainTable />
+    </Provider>
   );
 }
 

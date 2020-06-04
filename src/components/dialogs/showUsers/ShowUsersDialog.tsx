@@ -12,14 +12,17 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TableFooter from '@material-ui/core/TableFooter';
 import Paper from '@material-ui/core/Paper';
-import { routes, pagination, filterCriterias, columns } from '../../../config/constants';
+import { filterCriterias, columns, pagination } from '../../../utils/staticData/constants';
+import { routes } from '../../../utils/staticData/enums';
 import { Transition } from '../addTodo/styles';
 import { UsersData } from '../../../utils/interfaces/users';
-import Checkbox from '../../checkbox/TodoCheckbox';
+import CustomCheckbox from '../../checkbox/CustomCheckbox';
 import Pagination from '../../pagination/TodoPagination';
 import Filtration from '../../filtration/Filtration';
 import axios from 'axios';
-import { Options } from '../../mainTable/styles';
+import { useGlobalState } from '../../../utils/globalState/useGlobalState';
+import { ActionTypes } from '../../../utils/globalState/actions';
+import MainCheckbox from '../../checkbox/MainCheckbox';
 
 interface Props {
   open: boolean;
@@ -27,18 +30,20 @@ interface Props {
 }
 
 export const ShowUsersDialog:React.FC<Props> = ({ open, closeDialog }) => {
+  const { state, dispatch } = useGlobalState();
+  const { selectedUsers } = state;
+
   const [ users, setUsers ] = useState<UsersData[]>([]);
   const [ todosNumber, setTodosNumber ] = useState<number[]>([]);
   const [ allUsersCount, setAllUsersCount ] = useState<number>(0);
 
   const [ isOpen, setOpen ] = useState<boolean>(open);
-  const [ chosenUsers, setChosenUsers ] = useState<number[]>([]);
 
-  const [ currentPer, setPer ] = useState<number>(5);
-  const [ currentPage, setPage ] = useState<number>(1);
+  const [ currentPer, setPer ] = useState<number>(pagination.defaultPer);
+  const [ currentPage, setPage ] = useState<number>(pagination.defaultPage);
 
   const [ searchString, setSearchString ] = useState<string>('');
-  const [ filterCriteria, setFilterCriteria ] = useState<string>('user_name');
+  const [ filterCriteria, setFilterCriteria ] = useState<string>(filterCriterias.defaultUserCriteria);
 
   const getUsers = (newPer: number, newPage: number) => {
     axios.get(`${routes.server}/${routes.users}`, {
@@ -57,12 +62,11 @@ export const ShowUsersDialog:React.FC<Props> = ({ open, closeDialog }) => {
 
   const deleteUsers = () => {
     axios.delete(`${routes.server}/${routes.users}`, { data: {
-      ids: chosenUsers
+      ids: selectedUsers
     }}).then(() => {
       getUsers(currentPer, currentPage);
-      setChosenUsers([]);
+      dispatch({type: ActionTypes.CLEAR_USERS});
     });
-    
   }
 
   const filterUsers = (newSearchString: string, newSearchCriteria: string) => {
@@ -108,10 +112,19 @@ export const ShowUsersDialog:React.FC<Props> = ({ open, closeDialog }) => {
           <Table>
             <TableHead>
               <TableRow>
-                {columns.users.map(column => {
+                {columns.users.map((column: string, index: number) => {
                   return (
-                    <TableCell key={column}>{ column
-                       }</TableCell>
+                    <TableCell key={column}>
+                      { column }
+                      { index === 0 && 
+                        <MainCheckbox
+                          setAllAction={ActionTypes.SET_ALL_USERS}
+                          clearAllAction={ActionTypes.CLEAR_USERS}
+                          route={routes.users}
+                          key={'aaa'}
+                        /> 
+                      }
+                    </TableCell>
                   )
                 })}
               </TableRow>
@@ -121,11 +134,12 @@ export const ShowUsersDialog:React.FC<Props> = ({ open, closeDialog }) => {
                 return(
                   <TableRow key={user.id}>
                     <TableCell>
-                      <Checkbox 
+                      <CustomCheckbox 
                         itemId={user.id} 
-                        selectedItems={chosenUsers} 
-                        setSelectedItems={setChosenUsers}
                         isDisabled={todosNumber[index] !== 0}
+                        removeAction={ActionTypes.REMOVE_USER}
+                        addAction={ActionTypes.ADD_USER}
+                        selectedItems={selectedUsers}
                       />
                     </TableCell>
                     <TableCell>{user.user_name}</TableCell>
@@ -157,7 +171,7 @@ export const ShowUsersDialog:React.FC<Props> = ({ open, closeDialog }) => {
         <Button onClick={close} variant='contained' color='secondary'>
           Cancel
         </Button>
-        <Button onClick={confirm} variant='contained' color='primary' disabled={chosenUsers.length === 0}>
+        <Button onClick={confirm} variant='contained' color='primary' disabled={selectedUsers.length === 0}>
           Delete
         </Button>
       </DialogActions>

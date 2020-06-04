@@ -1,6 +1,7 @@
 import React, { useState, useEffect} from 'react';
 import { UsersData } from '../../../utils/interfaces/users';
-import { routes, labels, textFields, states } from '../../../config/constants';
+import { textFields, states } from '../../../utils/staticData/constants';
+import { routes, labels } from '../../../utils/staticData/enums';
 import { DialogTitle, Transition, StyledFormControl, CapitalizedSelect, CapitalizedMenuItem } from './styles';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -13,7 +14,6 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import { KeyboardDatePicker, MuiPickersUtilsProvider  } from '@material-ui/pickers';
 import moment from 'moment';
 import axios from 'axios';
-import { TodosData } from '../../../utils/interfaces/todos';
 import DateFnsUtils from '@date-io/date-fns';
 import InputLabel from '@material-ui/core/InputLabel';
 
@@ -23,7 +23,7 @@ interface Props {
   createTodo: (data: MainData) => void;
   isEdit: boolean;
   editTodo: (data: MainData) => void;
-  prevData: TodosData;
+  id: number
 }
 
 interface MainData {
@@ -34,7 +34,7 @@ interface MainData {
   state?: string;
 }
 
-export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog, createTodo, isEdit, editTodo, prevData }) => {
+export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog, createTodo, isEdit, editTodo, id }) => {
   const [ isOpen, setOpen ] = useState<boolean>(open);
 
   const [ users, setUsers ] = useState<UsersData[]>([]);
@@ -77,11 +77,19 @@ export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog, createTodo, i
   }
 
   const fill = () => {
-    setTitle(prevData.title);
-    setState(prevData.state);
-    setUserId(prevData.user_id);
-    setDeadline(prevData.deadline);
-    setDescription(prevData.description);
+    axios.get(`${routes.server}/${routes.todos}`, {
+      params: {
+        id
+      }
+    }).then(res => {
+      const { title, state, user_id, deadline, description } = res.data;
+      setTitle(title);
+      setState(state);
+      setUserId(user_id);
+      setDeadline(deadline);
+      setDescription(description);
+    });
+    
   }
 
   const close = () => {
@@ -94,7 +102,7 @@ export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog, createTodo, i
         const data = { title, deadline, userId, description };
         createTodo(data);
       } else {
-        const data = { id: prevData.id, title, deadline, userId, description, state };
+        const data = { id, title, deadline, userId, description, state };
         editTodo(data);
       }
       closeDialog();
@@ -123,7 +131,7 @@ export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog, createTodo, i
     });
     isEdit ? fill() : clear();
   }, [ open, isEdit ]);
-
+  
   return (
     <Dialog
       open={isOpen}
@@ -172,12 +180,11 @@ export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog, createTodo, i
               disableToolbar
               inputVariant='outlined'
               variant='inline'
-              format='MM/dd/yyyy'
+              format={'MM/dd/yyyy'}
               margin='normal'
               label={labels.deadline}
               value={deadline}
               onChange={handleDeadline}
-              KeyboardButtonProps={{ 'aria-label': 'change date' }}
             />
           </MuiPickersUtilsProvider>
         </FormControl>
