@@ -12,8 +12,8 @@ import { Options, Title, Border, StyledTableCell, MarginedButton, Arrow } from '
 import { AddTodoDialog } from '../dialogs/addTodo/AddTodoDialog';
 import { AddUserDialog } from '../dialogs/addUser/AddUserDialog';
 import { ShowUsersDialog } from '../dialogs/showUsers/ShowUsersDialog';
-import { columns, sortingOrders, sortingCriterias, filterCriterias, titles, pagination } from '../../utils/staticData/constants';
-import { routes, dateFormats, buttons } from '../../utils/staticData/enums';
+import { columns, sortingOrders, sortingCriterias, filterCriterias, pagination } from '../../utils/staticData/constants';
+import { routes } from '../../utils/staticData/enums';
 import axios from 'axios';
 import moment from 'moment';
 import UnitCheckbox from '../checkbox/UnitCheckbox';
@@ -113,9 +113,10 @@ export const MainTable:React.FC = () => {
   }, [ currentPage, currentPer, order, searchString ]);
 
   return (
+    <div style={{backgroundColor: '#ececec', height: '100%'}}>
     <TableContainer component={Paper}>
       <Options>
-        <Title>{titles.todos.main}</Title>
+        <Title>Todos</Title>
         <Filtration 
           filterData={filterTodos}
           columns={columns.todos.slice(1)}
@@ -124,9 +125,9 @@ export const MainTable:React.FC = () => {
           defaultFilterLabel={'Title'}
         />
         <div>
-          <MarginedButton variant='outlined' onClick={() => { setOpenShowUsersDialog(true) }}>{titles.users.all}</MarginedButton>
-          <MarginedButton variant='outlined' onClick={() => { setOpenAddDialog(true); setIsEdit(false) }}>{titles.todos.add}</MarginedButton>
-          <MarginedButton variant='outlined' onClick={() => { setOpenAddUserDialog(true) }}>{titles.users.add}</MarginedButton>
+          <MarginedButton variant='outlined' onClick={() => { setOpenShowUsersDialog(true) }}>All users</MarginedButton>
+          <MarginedButton variant='outlined' onClick={() => { setOpenAddDialog(true); setIsEdit(false) }}>Add todo</MarginedButton>
+          <MarginedButton variant='outlined' onClick={() => { setOpenAddUserDialog(true) }}>Add user</MarginedButton>
         </div>
       </Options>
       <Border></Border>
@@ -171,7 +172,7 @@ export const MainTable:React.FC = () => {
                 <TableCell>{ todo.title }</TableCell>
                 <StyledTableCell>{ todo.state }</StyledTableCell>
                 <TableCell>{ todo.user_name }</TableCell>
-                <TableCell>{ moment(todo.deadline).format(dateFormats.moment) }</TableCell>
+                <TableCell>{ moment(todo.deadline).format('MM/DD/YYYY') }</TableCell>
               </TableRow>
             )
           })}
@@ -181,10 +182,10 @@ export const MainTable:React.FC = () => {
             <TableCell>
               <Options>
                 <MarginedButton variant='outlined' disabled={selectedTodos.length === 0} onClick={() => { setOpenDeleteItemsDialog(true) }}>
-                  {buttons.delete}
+                  Delete
                 </MarginedButton>
                 <MarginedButton variant='outlined' disabled={selectedTodos.length !== 1} onClick={() => { setOpenAddDialog(true); setIsEdit(true) }} >
-                  {titles.edit}
+                  Edit
                 </MarginedButton>
               </Options>
             </TableCell>
@@ -226,5 +227,6 @@ export const MainTable:React.FC = () => {
         handleDelete={ deleteTodos }
       />
     </TableContainer>
+    </div>
   );
 }

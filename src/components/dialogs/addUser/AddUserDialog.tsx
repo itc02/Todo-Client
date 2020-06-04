@@ -6,8 +6,8 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions';
 import { DialogTitle, StyledFormControl } from '../addTodo/styles';
 import FormHelperText from '@material-ui/core/FormHelperText';
-import { textFields, titles } from '../../../utils/staticData/constants';
-import { buttons, helpers,  routes, labels } from '../../../utils/staticData/enums';
+import { textFields } from '../../../utils/staticData/constants';
+import { routes, labels } from '../../../utils/staticData/enums';
 import { Transition } from '../addTodo/styles';
 import { UsersData } from '../../../utils/interfaces/users';
 import axios from 'axios';
@@ -77,7 +77,7 @@ export const AddUserDialog:React.FC<Props> = ({ open, closeDialog }) => {
       onClose={closeDialog}
       fullWidth
     >
-      <DialogTitle>{titles.users.add}</DialogTitle>
+      <DialogTitle>Add user</DialogTitle>
       <DialogContent>
         <StyledFormControl fullWidth>
           <TextField
@@ -88,7 +88,7 @@ export const AddUserDialog:React.FC<Props> = ({ open, closeDialog }) => {
             inputProps={{ maxLength: textFields.user.maxLength }}
             onChange={handleUser}
           ></TextField>
-          <FormHelperText>{helpers.symbol}: {user.length}/{textFields.user.maxLength}</FormHelperText>
+          <FormHelperText>Symbols: {user.length}/{textFields.user.maxLength}</FormHelperText>
         </StyledFormControl>
 
         <StyledFormControl fullWidth>
@@ -103,10 +103,10 @@ export const AddUserDialog:React.FC<Props> = ({ open, closeDialog }) => {
       </DialogContent>
       <DialogActions>
         <Button onClick={close} variant='contained' color='secondary'>
-          {buttons.cancel}
+          Cancel
         </Button>
         <Button onClick={confirm} variant='contained' color='primary' disabled={!isDataValid()}>
-          {titles.add}
+          Add
         </Button>
       </DialogActions>
     </Dialog>

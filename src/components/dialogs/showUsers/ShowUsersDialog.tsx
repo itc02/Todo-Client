@@ -12,8 +12,8 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TableFooter from '@material-ui/core/TableFooter';
 import Paper from '@material-ui/core/Paper';
-import { filterCriterias, columns, titles, pagination } from '../../../utils/staticData/constants';
-import { buttons, routes } from '../../../utils/staticData/enums';
+import { filterCriterias, columns, pagination } from '../../../utils/staticData/constants';
+import { routes } from '../../../utils/staticData/enums';
 import { Transition } from '../addTodo/styles';
 import { UsersData } from '../../../utils/interfaces/users';
 import UnitCheckbox from '../../checkbox/UnitCheckbox';
@@ -99,7 +99,7 @@ export const ShowUsersDialog:React.FC<Props> = ({ open, closeDialog }) => {
       onClose={closeDialog}
       fullWidth
     >
-      <DialogTitle>{titles.users.all}</DialogTitle>
+      <DialogTitle>All users</DialogTitle>
       <DialogContent>
         <Filtration
           filterData={filterUsers}
@@ -169,10 +169,10 @@ export const ShowUsersDialog:React.FC<Props> = ({ open, closeDialog }) => {
       </DialogContent>
       <DialogActions>
         <Button onClick={close} variant='contained' color='secondary'>
-          {buttons.cancel}
+          Cancel
         </Button>
         <Button onClick={confirm} variant='contained' color='primary' disabled={selectedUsers.length === 0}>
-          {buttons.delete}
+          Delete
         </Button>
       </DialogActions>
     </Dialog>

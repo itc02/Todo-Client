@@ -5,7 +5,7 @@ import { Provider } from '../../utils/globalState/Provider';
 const App: React.FC = () => {
   return (
     <Provider>
-      <MainTable />
+        <MainTable />
     </Provider>
   );
 }

@@ -24,7 +24,7 @@ export const StyledTableCell = styled(TableCell)`
 `;
 
 export const MarginedButton = styled(Button)`
-  margin-left: 10px;
+  margin-left: 20px;
 `;
 
 export const Arrow = styled.i`

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions';
-import { buttons } from '../../../utils/staticData/enums';
 import { Transition } from '../addTodo/styles';
 import Button from '@material-ui/core/Button';
 import { Question } from './styles';
@@ -42,10 +41,10 @@ export const DeleteItems:React.FC<Props> = ({open, closeDialog, handleDelete}) =
       </DialogContent>
       <DialogActions>
         <Button onClick={close} variant='contained' color='secondary'>
-          {buttons.cancel}
+          Cancel
         </Button>
         <Button onClick={confirm} variant='contained' color='primary'>
-          {buttons.delete}
+          Delete
         </Button>
       </DialogActions>
     </Dialog>

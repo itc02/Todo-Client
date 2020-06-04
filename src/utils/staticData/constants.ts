@@ -11,23 +11,6 @@ export const textFields = {
   }
 };
 
-
-export const titles = {
-  edit: 'Edit',
-  add: 'Add',
-  todos: {
-    main: 'Todos',
-    edit: 'Edit todo',
-    add: 'Add todo'
-  },
-  users: {
-    add: 'Add user',
-    all: 'All users'
-  }
-}
-
-
-
 export const sortingCriterias = {
   todos: ['title', 'state', 'user_name', 'deadline'],
   defaultTodoCriteria: 'title'
@@ -52,11 +35,8 @@ export const sortingOrders = {
   defaultOrder: 'none'
 }
 
-
 export const pagination = {
   rowsOnPage: [5, 10, 20],
   defaultPage: 1,
   defaultPer: 5
 };
-
-

@@ -14,17 +14,3 @@ export enum labels {
   filter = 'Filter by: ',
   state = 'New state'
 };
-
-export enum dateFormats {
-  moment = 'MM/DD/YYYY',
-  datePicker = 'MM/dd/yyyy'
-};
-
-export enum buttons {
-  cancel = 'Cancel',
-  delete = 'Delete'
-}
-
-export enum helpers {
-  symbol = 'Symbols'
-}
