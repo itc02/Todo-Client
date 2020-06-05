@@ -35,7 +35,7 @@ const Filtration = ({ filterData, columns, filterCriterias, defaultFilterCriteri
     const newFilterCriteria = event.target.id;
     if(newFilterCriteria) {
       setFilterCriteria(newFilterCriteria);
-      setFilterLabel(columns[filterCriterias.indexOf(newFilterCriteria)]);
+      setFilterLabel(newFilterCriteria === 'all' ? 'All' : columns[filterCriterias.indexOf(newFilterCriteria)]);
     }
     setAnchorEl(null);
   }
@@ -75,6 +75,7 @@ const Filtration = ({ filterData, columns, filterCriterias, defaultFilterCriteri
             <MenuItem onClick={handleClose} key={criteria} id={filterCriterias[index]}>{ criteria }</MenuItem>
           )
         })}
+        <MenuItem onClick={handleClose} key='all' id='all'>All</MenuItem>
       </Menu>
     </FilterOptions>
   )
