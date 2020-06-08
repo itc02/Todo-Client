@@ -2,11 +2,7 @@ import React, { useState, useEffect} from 'react';
 import { UsersData } from '../../../utils/interfaces/users';
 import { textFields, states } from '../../../utils/staticData/constants';
 import { routes, labels } from '../../../utils/staticData/enums';
-import { DialogTitle, Transition, StyledFormControl, CapitalizedSelect, CapitalizedMenuItem } from './styles';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import Button from '@material-ui/core/Button';
+import { StyledFormControl, CapitalizedSelect, CapitalizedMenuItem } from './styles';
 import FormControl from '@material-ui/core/FormControl';
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
@@ -16,6 +12,7 @@ import moment from 'moment';
 import axios from 'axios';
 import DateFnsUtils from '@date-io/date-fns';
 import InputLabel from '@material-ui/core/InputLabel';
+import { DialogStructure } from '../common/DialogStructure';
 
 interface Props {
   open: boolean;
@@ -35,8 +32,6 @@ interface MainData {
 }
 
 export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog, createTodo, isEdit, editTodo, id }) => {
-  const [ isOpen, setOpen ] = useState<boolean>(open);
-
   const [ users, setUsers ] = useState<UsersData[]>([]);
 
   const [ title, setTitle ] = useState<string>('');
@@ -66,7 +61,13 @@ export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog, createTodo, i
   }
 
   const isDataValid = () => {
-    return title && deadline && userId && description && moment(deadline).isValid();
+    return (
+      Boolean(title) && 
+      Boolean(deadline) && 
+      Boolean(userId) && 
+      Boolean(description) && 
+      moment(deadline || undefined).isValid()
+    );
   }
 
   const clear = ()  => {
@@ -125,24 +126,22 @@ export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog, createTodo, i
   }
   
   useEffect(() => {
-    setOpen(open);
     axios.get(`${routes.server}/${routes.users}`).then(res => {
       setUsers(res.data.users);
     });
     isEdit ? fill() : clear();
-  }, [ open, isEdit ]);
-  
+  }, [ isEdit ]);
+
   return (
-    <Dialog
-      open={isOpen}
-      TransitionComponent={Transition}
-      keepMounted
-      onClose={closeDialog}
-      fullWidth
+    <DialogStructure
+      open={open}
+      title={`${isEdit ? 'Edit' : 'Add'} todo`}
+      action={isEdit ? 'Edit' : 'Add'}
+      checkValidation={isDataValid}
+      close={close}
+      confirm={confirm}
     >
-      <DialogTitle>{isEdit ? 'Edit' : 'Add'} todo</DialogTitle>
-      <DialogContent>
-        <StyledFormControl fullWidth>
+      <StyledFormControl fullWidth>
           <TextField
             value={title}
             label={labels.title}
@@ -212,15 +211,6 @@ export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog, createTodo, i
           ></TextField>
           <FormHelperText>Symbols: {description.length}/{textFields.description.maxLength}</FormHelperText>
         </StyledFormControl>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={close} variant='contained' color='secondary'>
-          Cancel
-        </Button>
-        <Button onClick={confirm} variant='contained' color='primary' disabled={!isDataValid()}>
-          {isEdit ? 'Edit' : 'Add'}
-        </Button>
-      </DialogActions>
-    </Dialog>
-  )
+    </DialogStructure>
+  );
 }

@@ -1,9 +1,4 @@
 import React, {useState, useEffect} from 'react';
-import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogActions from '@material-ui/core/DialogActions';
-import { DialogTitle } from '../addTodo/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -14,7 +9,6 @@ import TableFooter from '@material-ui/core/TableFooter';
 import Paper from '@material-ui/core/Paper';
 import { filterCriterias, columns, pagination } from '../../../utils/staticData/constants';
 import { routes } from '../../../utils/staticData/enums';
-import { Transition } from '../addTodo/styles';
 import { UsersData } from '../../../utils/interfaces/users';
 import CustomCheckbox from '../../checkbox/CustomCheckbox';
 import Pagination from '../../pagination/TodoPagination';
@@ -23,6 +17,7 @@ import axios from 'axios';
 import { useGlobalState } from '../../../utils/globalState/useGlobalState';
 import { ActionTypes } from '../../../utils/globalState/actions';
 import MainCheckbox from '../../checkbox/MainCheckbox';
+import { DialogStructure }from '../common/DialogStructure';
 
 interface Props {
   open: boolean;
@@ -36,8 +31,6 @@ export const ShowUsersDialog:React.FC<Props> = ({ open, closeDialog }) => {
   const [ users, setUsers ] = useState<UsersData[]>([]);
   const [ todosNumber, setTodosNumber ] = useState<number[]>([]);
   const [ allUsersCount, setAllUsersCount ] = useState<number>(0);
-
-  const [ isOpen, setOpen ] = useState<boolean>(open);
 
   const [ currentPer, setPer ] = useState<number>(pagination.defaultPer);
   const [ currentPage, setPage ] = useState<number>(pagination.defaultPage);
@@ -82,26 +75,24 @@ export const ShowUsersDialog:React.FC<Props> = ({ open, closeDialog }) => {
     deleteUsers();
   }
 
+  const isDataValid = () => {
+    return selectedUsers.length !== 0;
+  }
+
   useEffect(() => {
-    setOpen(open);
     getUsers(currentPer, currentPage);
-  }, [ open ]);
-  
-  useEffect(() => {
-    getUsers(currentPer, currentPage);
-  }, [searchString]);
+  }, [ open, searchString ]);
 
   return(
-    <Dialog
-      open={isOpen}
-      TransitionComponent={Transition}
-      keepMounted
-      onClose={closeDialog}
-      fullWidth
+    <DialogStructure
+      open={open}
+      title='All users'
+      action='Delete'
+      checkValidation={isDataValid}
+      close={close}
+      confirm={confirm}
     >
-      <DialogTitle>All users</DialogTitle>
-      <DialogContent>
-        <Filtration
+      <Filtration
           filterData={filterUsers}
           columns={columns.users.slice(1, -1)}
           filterCriterias={filterCriterias.users}
@@ -166,15 +157,6 @@ export const ShowUsersDialog:React.FC<Props> = ({ open, closeDialog }) => {
             </TableFooter>
           </Table>
         </TableContainer>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={close} variant='contained' color='secondary'>
-          Cancel
-        </Button>
-        <Button onClick={confirm} variant='contained' color='primary' disabled={selectedUsers.length === 0}>
-          Delete
-        </Button>
-      </DialogActions>
-    </Dialog>
+    </DialogStructure>
   );
 }
