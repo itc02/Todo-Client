@@ -9,12 +9,12 @@ interface Props {
   open: boolean;
   title: string;
   action: string;
-  checkValidation: () => boolean;
+  isInvalid: boolean;
   close: () => void;
   confirm: () => void;
 }
 
-export const DialogStructure:React.FC<Props> = ({ open, title, action, checkValidation, close, confirm, children }) => {
+export const DialogStructure:React.FC<Props> = ({ open, title, action, isInvalid, close, confirm, children }) => {
   const [ isOpen, setOpen ] = useState<boolean>(open);
 
   useEffect(() => {
@@ -39,7 +39,7 @@ export const DialogStructure:React.FC<Props> = ({ open, title, action, checkVali
         <Button variant='contained' color='primary' onClick={close}>
           Cancel
         </Button>
-        <Button variant='contained' color='secondary' onClick={confirm} disabled={!checkValidation()}>
+        <Button variant='contained' color='secondary' onClick={confirm} disabled={isInvalid}>
           { action }
         </Button>
       </DialogActions>

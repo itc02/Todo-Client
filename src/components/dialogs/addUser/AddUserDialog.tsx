@@ -27,11 +27,11 @@ export const AddUserDialog:React.FC<Props> = ({ open, closeDialog }) => {
     setEmail(event.target.value);
   }
 
-  const isDataValid = () => {
+  const isDataInvalid = (): boolean => {
     return (
-      Boolean(user) && 
-      Boolean(email) && 
-      !users.map(user => user.user_name).includes(user)
+      !user ||
+      !email ||
+      users.map(user => user.user_name).includes(user)
     )
   }
 
@@ -41,7 +41,7 @@ export const AddUserDialog:React.FC<Props> = ({ open, closeDialog }) => {
   }
 
   const confirm = () => {
-    if(isDataValid()) {
+    if(!isDataInvalid()) {
       clear();
       axios.post(`${routes.server}/${routes.users}`, {
         user_name: user,
@@ -71,7 +71,7 @@ export const AddUserDialog:React.FC<Props> = ({ open, closeDialog }) => {
       open={open}
       title='Add user'
       action='Add'
-      checkValidation={isDataValid}
+      isInvalid={isDataInvalid()}
       close={close}
       confirm={confirm}
     >

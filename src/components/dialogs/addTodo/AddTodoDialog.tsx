@@ -60,13 +60,13 @@ export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog, createTodo, i
     setDescription(event.target.value);
   }
 
-  const isDataValid = () => {
+  const isDataInvalid = (): boolean => {
     return (
-      Boolean(title) && 
-      Boolean(deadline) && 
-      Boolean(userId) && 
-      Boolean(description) && 
-      moment(deadline || undefined).isValid()
+      !title ||
+      !deadline ||
+      !userId ||
+      !description ||
+      !moment(deadline || undefined).isValid()
     );
   }
 
@@ -98,7 +98,7 @@ export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog, createTodo, i
   }
 
   const confirm = () => {
-    if (isDataValid()) {
+    if (!isDataInvalid()) {
       if(!isEdit) {
         const data = { title, deadline, userId, description };
         createTodo(data);
@@ -137,7 +137,7 @@ export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog, createTodo, i
       open={open}
       title={`${isEdit ? 'Edit' : 'Add'} todo`}
       action={isEdit ? 'Edit' : 'Add'}
-      checkValidation={isDataValid}
+      isInvalid={isDataInvalid()}
       close={close}
       confirm={confirm}
     >

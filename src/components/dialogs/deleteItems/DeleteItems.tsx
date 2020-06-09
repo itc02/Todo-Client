@@ -24,7 +24,7 @@ export const DeleteItems:React.FC<Props> = ({open, closeDialog, handleDelete}) =
       open={open}
       title=''
       action='Delete'
-      checkValidation={() => true}
+      isInvalid={false}
       close={close}
       confirm={confirm}
     >

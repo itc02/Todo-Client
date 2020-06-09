@@ -75,10 +75,6 @@ export const ShowUsersDialog:React.FC<Props> = ({ open, closeDialog }) => {
     deleteUsers();
   }
 
-  const isDataValid = () => {
-    return selectedUsers.length !== 0;
-  }
-
   useEffect(() => {
     getUsers(currentPer, currentPage);
   }, [ open, searchString ]);
@@ -88,7 +84,7 @@ export const ShowUsersDialog:React.FC<Props> = ({ open, closeDialog }) => {
       open={open}
       title='All users'
       action='Delete'
-      checkValidation={isDataValid}
+      isInvalid={selectedUsers.length === 0}
       close={close}
       confirm={confirm}
     >
