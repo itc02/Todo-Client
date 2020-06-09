@@ -1,15 +1,11 @@
 import React, {useState, useEffect} from 'react';
-import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
-import Dialog from '@material-ui/core/Dialog';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogActions from '@material-ui/core/DialogActions';
-import { DialogTitle, StyledFormControl } from '../addTodo/styles';
+import { StyledFormControl } from '../addTodo/styles';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import { textFields } from '../../../utils/staticData/constants';
 import { routes, labels } from '../../../utils/staticData/enums';
-import { Transition } from '../addTodo/styles';
 import { UsersData } from '../../../utils/interfaces/users';
+import { DialogStructure }from '../common/DialogStructure';
 import axios from 'axios';
 
 interface Props {
@@ -19,8 +15,6 @@ interface Props {
 
 export const AddUserDialog:React.FC<Props> = ({ open, closeDialog }) => {
   const [ users, setUsers ] = useState<UsersData[]>([]);
-
-  const [ isOpen, setOpen ] = useState<boolean>(open);
 
   const [ user, setUser ] = useState<string>('');
   const [ email, setEmail ] = useState<string>('');
@@ -33,8 +27,12 @@ export const AddUserDialog:React.FC<Props> = ({ open, closeDialog }) => {
     setEmail(event.target.value);
   }
 
-  const isDataValid = () => {
-    return user && email && !users.map(user => user.user_name).includes(user);
+  const isDataInvalid = (): boolean => {
+    return (
+      !user ||
+      !email ||
+      users.map(user => user.user_name).includes(user)
+    )
   }
 
   const close = () => {
@@ -43,7 +41,7 @@ export const AddUserDialog:React.FC<Props> = ({ open, closeDialog }) => {
   }
 
   const confirm = () => {
-    if(isDataValid()) {
+    if(!isDataInvalid()) {
       clear();
       axios.post(`${routes.server}/${routes.users}`, {
         user_name: user,
@@ -59,7 +57,6 @@ export const AddUserDialog:React.FC<Props> = ({ open, closeDialog }) => {
   }
 
   useEffect(() => {
-    setOpen(open);
     axios.get(`${routes.server}/${routes.users}`, {
       params: {
         without_pagination: true
@@ -70,16 +67,15 @@ export const AddUserDialog:React.FC<Props> = ({ open, closeDialog }) => {
   }, [ open ]);
 
   return(
-    <Dialog
-      open={isOpen}
-      TransitionComponent={Transition}
-      keepMounted
-      onClose={closeDialog}
-      fullWidth
+    <DialogStructure
+      open={open}
+      title='Add user'
+      action='Add'
+      isInvalid={isDataInvalid()}
+      close={close}
+      confirm={confirm}
     >
-      <DialogTitle>Add user</DialogTitle>
-      <DialogContent>
-        <StyledFormControl fullWidth>
+      <StyledFormControl fullWidth>
           <TextField
             value={user}
             label={labels.user}
@@ -100,15 +96,6 @@ export const AddUserDialog:React.FC<Props> = ({ open, closeDialog }) => {
             onChange={handleEmail}
           ></TextField>
         </StyledFormControl>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={close} variant='contained' color='secondary'>
-          Cancel
-        </Button>
-        <Button onClick={confirm} variant='contained' color='primary' disabled={!isDataValid()}>
-          Add
-        </Button>
-      </DialogActions>
-    </Dialog>
+    </DialogStructure>
   );
 }
