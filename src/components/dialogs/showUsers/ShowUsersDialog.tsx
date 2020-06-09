@@ -84,7 +84,7 @@ export const ShowUsersDialog:React.FC<Props> = ({ open, closeDialog }) => {
       open={open}
       title='All users'
       action='Delete'
-      isInvalid={selectedUsers.length === 0}
+      isInvalid={!selectedUsers.length}
       close={close}
       confirm={confirm}
     >
