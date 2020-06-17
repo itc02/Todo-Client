@@ -43,7 +43,7 @@ export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog, createTodo, i
     deadline: null,
     username: '',
     description: ''
-  })
+  });
 
   const NewTodoSchema = Yup.object().shape({
     title: Yup.string()
@@ -64,22 +64,22 @@ export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog, createTodo, i
     state: isEdit ? Yup.string()
       .test('availableState', 'Invalid state', state => states.includes(state))
       .required('State is required') : Yup.string()
-  })
+  });
 
-  const confirm = (values: FormData) => {
-    const user = users.find(user => user.user_name === values.username);
+  const confirm = (data: FormData) => {
+    const user = users.find(user => user.user_name === data.username);
     if(!isEdit) {
-      const { title, deadline, username, description } = values
+      const { title, deadline, username, description } = data
       createTodo({ title, deadline, userId: user ? user.id : 0, description });
     } else {
-      const { title, deadline, username, description, state } = values;
+      const { title, deadline, username, description, state } = data;
       editTodo({ id, title, deadline, userId: user ? user.id : 0, description, state });
     }
     closeDialog();
   }
 
   const usernames = () => {
-    return [''].concat(users.map(user => user.user_name));
+    return users.map(user => user.user_name);
   }
 
   const getOptionLabel = (option: any) => {
@@ -195,7 +195,7 @@ export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog, createTodo, i
             <StyledFormControl fullWidth>
               <Autocomplete
                 options={usernames()}
-                value={values.username}
+                value={!values.username ? null : values.username}
                 onChange={(e: any, value: string | null) => setFieldValue('username', value || '')}
                 getOptionLabel={getOptionLabel}
                 renderInput={(params: any) => {
