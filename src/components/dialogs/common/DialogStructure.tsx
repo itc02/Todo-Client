@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import { Transition, DialogTitle } from './styles';
-import Button from '@material-ui/core/Button';
+import DialogActions from './DialogActions';
 
 interface Props {
   open: boolean;
   title: string;
-  action: string;
-  isInvalid: boolean;
   close: () => void;
-  confirm: () => void;
+  isForm: boolean;
+  action?: string;
+  confirm?: () => void;
+  isInvalid?: boolean;
 }
 
-export const DialogStructure:React.FC<Props> = ({ open, title, action, isInvalid, close, confirm, children }) => {
+export const DialogStructure:React.FC<Props> = ({ open, title, close, isForm, action, confirm, isInvalid, children }) => {
   const [ isOpen, setOpen ] = useState<boolean>(open);
 
   useEffect(() => {
@@ -34,15 +34,16 @@ export const DialogStructure:React.FC<Props> = ({ open, title, action, isInvalid
       }
       <DialogContent>
         { children }
+        {!isForm && 
+          <DialogActions
+            close={close}
+            action={action}
+            isForm={false}
+            confirm={confirm}
+            isInvalid={isInvalid}
+          />
+        }
       </DialogContent>
-      <DialogActions>
-        <Button variant='contained' color='primary' onClick={close}>
-          Cancel
-        </Button>
-        <Button variant='contained' color='secondary' onClick={confirm} disabled={isInvalid}>
-          { action }
-        </Button>
-      </DialogActions>
     </Dialog>
   )
 }

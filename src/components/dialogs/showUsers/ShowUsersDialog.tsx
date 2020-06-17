@@ -83,76 +83,77 @@ export const ShowUsersDialog:React.FC<Props> = ({ open, closeDialog }) => {
     <DialogStructure
       open={open}
       title='All users'
-      action='Delete'
-      isInvalid={!selectedUsers.length}
       close={close}
+      isForm={false}
+      action={'Delete'}
       confirm={confirm}
+      isInvalid={!selectedUsers.length}
     >
       <Filtration
-          filterData={filterUsers}
-          columns={columns.users.slice(1, -1)}
-          filterCriterias={filterCriterias.users}
-          defaultFilterCriteria={'user_name'}
-          defaultFilterLabel={'Name'}
-        />
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                {columns.users.map((column: string, index: number) => {
-                  return (
-                    <TableCell key={column}>
-                      { column }
-                      { index === 0 && 
-                        <MainCheckbox
-                          setAllAction={ActionTypes.SET_ALL_USERS}
-                          clearAllAction={ActionTypes.CLEAR_USERS}
-                          route={routes.users}
-                          key={'aaa'}
-                        /> 
-                      }
-                    </TableCell>
-                  )
-                })}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {users.map((user, index) => {
-                return(
-                  <TableRow key={user.id}>
-                    <TableCell>
-                      <CustomCheckbox 
-                        itemId={user.id} 
-                        isDisabled={todosNumber[index] !== 0}
-                        removeAction={ActionTypes.REMOVE_USER}
-                        addAction={ActionTypes.ADD_USER}
-                        selectedItems={selectedUsers}
-                      />
-                    </TableCell>
-                    <TableCell>{user.user_name}</TableCell>
-                    <TableCell>{todosNumber[index]}</TableCell>
-                  </TableRow>
+        filterData={filterUsers}
+        columns={columns.users.slice(1, -1)}
+        filterCriterias={filterCriterias.users}
+        defaultFilterCriteria={'user_name'}
+        defaultFilterLabel={'Name'}
+      />
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              {columns.users.map((column: string, index: number) => {
+                return (
+                  <TableCell key={column}>
+                    { column }
+                    { index === 0 && 
+                      <MainCheckbox
+                        setAllAction={ActionTypes.SET_ALL_USERS}
+                        clearAllAction={ActionTypes.CLEAR_USERS}
+                        route={routes.users}
+                        key={'aaa'}
+                      /> 
+                    }
+                  </TableCell>
                 )
               })}
-            </TableBody>
-            <TableFooter>
-              <TableRow>
-                <TableCell colSpan={3}>
-                  <Pagination
-                    items={users}
-                    getItems={getUsers}
-                    allItemsCount={allUsersCount}
-                    page={allUsersCount === users.length ? 1 : currentPage}
-                    per={currentPer}
-                    setPage={setPage}
-                    setPer={setPer}
-                    isSorted={false}
-                  />
-                </TableCell>
-              </TableRow>
-            </TableFooter>
-          </Table>
-        </TableContainer>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {users.map((user, index) => {
+              return(
+                <TableRow key={user.id}>
+                  <TableCell>
+                    <CustomCheckbox 
+                      itemId={user.id} 
+                      isDisabled={todosNumber[index] !== 0}
+                      removeAction={ActionTypes.REMOVE_USER}
+                      addAction={ActionTypes.ADD_USER}
+                      selectedItems={selectedUsers}
+                    />
+                  </TableCell>
+                  <TableCell>{user.user_name}</TableCell>
+                  <TableCell>{todosNumber[index]}</TableCell>
+                </TableRow>
+              )
+            })}
+          </TableBody>
+          <TableFooter>
+            <TableRow>
+              <TableCell colSpan={3}>
+                <Pagination
+                  items={users}
+                  getItems={getUsers}
+                  allItemsCount={allUsersCount}
+                  page={allUsersCount === users.length ? 1 : currentPage}
+                  per={currentPer}
+                  setPage={setPage}
+                  setPer={setPer}
+                  isSorted={false}
+                />
+              </TableCell>
+            </TableRow>
+          </TableFooter>
+        </Table>
+      </TableContainer>
     </DialogStructure>
   );
 }

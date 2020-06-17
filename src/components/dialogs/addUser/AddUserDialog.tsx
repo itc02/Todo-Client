@@ -5,55 +5,41 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import { textFields } from '../../../utils/staticData/constants';
 import { routes, labels } from '../../../utils/staticData/enums';
 import { UsersData } from '../../../utils/interfaces/users';
-import { DialogStructure }from '../common/DialogStructure';
+import { DialogStructure } from '../common/DialogStructure';
 import axios from 'axios';
+import { Formik } from 'formik';
+import DialogActions from '../common/DialogActions';
+import * as Yup from 'yup';
 
 interface Props {
   open: boolean;
   closeDialog: () => void;
 }
 
+interface FormData {
+  name: string;
+  email: string;
+}
+
 export const AddUserDialog:React.FC<Props> = ({ open, closeDialog }) => {
-  const [ users, setUsers ] = useState<UsersData[]>([]);
+  const [ users, setUsers ] = useState<string[]>([]);
 
-  const [ user, setUser ] = useState<string>('');
-  const [ email, setEmail ] = useState<string>('');
+  const NewUserSchema = Yup.object().shape({
+    name: Yup.string()
+      .min(textFields.user.minLength, `Minimum: ${textFields.user.minLength} symbols`)
+      .max(textFields.user.maxLength, `Maximum: ${textFields.user.maxLength} symbols`)
+      .test('isTaken', 'This username is already taken', name => !users.includes(name))
+      .required('Username is required'),
+    email: Yup.string()
+      .email('Invalid email')
+      .required('Email is required')
+  });
 
-  const handleUser = (event: any) => {
-    setUser(event.target.value);
-  }
-
-  const handleEmail = (event: any) => {
-    setEmail(event.target.value);
-  }
-
-  const isDataInvalid = (): boolean => {
-    return (
-      !user ||
-      !email ||
-      users.map(user => user.user_name).includes(user)
-    )
-  }
-
-  const close = () => {
-    clear();
-    closeDialog();
-  }
-
-  const confirm = () => {
-    if(!isDataInvalid()) {
-      clear();
-      axios.post(`${routes.server}/${routes.users}`, {
-        user_name: user,
-        email
-      });
-      closeDialog();
-    }
-  }
-
-  const clear = () => {
-    setUser('');
-    setEmail('');
+  const confirm = (values: FormData) => {
+    axios.post(`${routes.server}/${routes.users}`, {
+      user_name: values.name,
+      email: values.email
+    });
   }
 
   useEffect(() => {
@@ -62,7 +48,7 @@ export const AddUserDialog:React.FC<Props> = ({ open, closeDialog }) => {
         without_pagination: true
       }
     }).then(res => {
-      setUsers(res.data);
+      setUsers(res.data.map((user: any) => user.user_name));
     });
   }, [ open ]);
 
@@ -70,32 +56,52 @@ export const AddUserDialog:React.FC<Props> = ({ open, closeDialog }) => {
     <DialogStructure
       open={open}
       title='Add user'
-      action='Add'
-      isInvalid={isDataInvalid()}
-      close={close}
-      confirm={confirm}
+      close={closeDialog}
+      isForm={true}
     >
-      <StyledFormControl fullWidth>
-          <TextField
-            value={user}
-            label={labels.user}
-            variant='outlined'
-            fullWidth
-            inputProps={{ maxLength: textFields.user.maxLength }}
-            onChange={handleUser}
-          ></TextField>
-          <FormHelperText>Symbols: {user.length}/{textFields.user.maxLength}</FormHelperText>
-        </StyledFormControl>
-
-        <StyledFormControl fullWidth>
-          <TextField
-            value={email}
-            label={labels.email}
-            variant='outlined'
-            fullWidth
-            onChange={handleEmail}
-          ></TextField>
-        </StyledFormControl>
+      <Formik
+        initialValues={{name: '', email: ''}}
+        onSubmit={confirm}
+        validationSchema={NewUserSchema}
+      >
+        {({values, errors, touched, handleChange, handleSubmit }) => (
+          <form onSubmit={handleSubmit}>
+            <StyledFormControl fullWidth>
+              <TextField
+                type='text'
+                name='name'
+                value={values.name}
+                label={labels.user}
+                variant='outlined'
+                fullWidth
+                inputProps={{ maxLength: textFields.user.maxLength }}
+                onChange={handleChange}
+                error={(errors.name && touched.name) ? true : false}
+              />
+              {(errors.name && touched.name) ? <FormHelperText error={true}>{errors.name}</FormHelperText> : null }
+            </StyledFormControl>
+            
+            <StyledFormControl fullWidth>
+              <TextField
+                type='email'
+                name='email'
+                value={values.email}
+                label={labels.email}
+                variant='outlined'
+                fullWidth
+                onChange={handleChange}
+                error={(errors.email && touched.email) ? true : false}
+              />
+              {(errors.email && touched.email) ? <FormHelperText error={true}>{errors.email}</FormHelperText> : null }
+            </StyledFormControl>
+            <DialogActions 
+              close={closeDialog}
+              action='Add'
+              isForm={true}
+            />
+          </form>
+        )}
+      </Formik>
     </DialogStructure>
   );
 }

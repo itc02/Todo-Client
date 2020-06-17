@@ -1,12 +1,15 @@
 export const textFields = {
   title: {
+    minLength: 8,
     maxLength: 32
   },
   description: {
     maxLength: 512,
+    minLength: 64,
     rows: 8
   },
   user: {
+    minLength: 5,
     maxLength: 32
   }
 };
