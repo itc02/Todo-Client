@@ -23,9 +23,9 @@ export const DeleteItems:React.FC<Props> = ({open, closeDialog, handleDelete}) =
     <DialogStructure
       open={open}
       title=''
-      action='Delete'
-      isInvalid={false}
       close={close}
+      isForm={false}
+      action='Delete'
       confirm={confirm}
     >
       <Question>Do you really want to delete?</Question>
