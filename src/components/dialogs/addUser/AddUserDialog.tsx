@@ -35,10 +35,10 @@ export const AddUserDialog:React.FC<Props> = ({ open, closeDialog }) => {
       .required('Email is required')
   });
 
-  const confirm = (values: FormData) => {
+  const confirm = (data: FormData) => {
     axios.post(`${routes.server}/${routes.users}`, {
-      user_name: values.name,
-      email: values.email
+      user_name: data.name,
+      email: data.email
     });
   }
 
