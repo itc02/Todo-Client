@@ -25,4 +25,4 @@ export const StyledActions = styled.div`
 
 export const StyledActionButton = styled(Button)`
   margin-left: 10px;
-`
+`;
