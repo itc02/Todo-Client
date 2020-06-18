@@ -5,18 +5,18 @@ import Button from '@material-ui/core/Button';
 export const Options = styled.div`
   display: flex;
   align-items: center;
-  margin-left: 16px;
-  margin-right: 16px; 
+  margin-left: 1rem;
+  margin-right: 1rem; 
 `;
 
 export const Title = styled.h1`
   font-family: sans-serif;
-  margin-right: 15px;
+  margin-right: 1rem;
 `;
 
 export const Border = styled.hr`
   border: 0.5px solid #e0e0e0;
-  margin-bottom: 0px;
+  margin-bottom: 0;
 `;
 
 export const StyledTableCell = styled(TableCell)`
@@ -24,7 +24,7 @@ export const StyledTableCell = styled(TableCell)`
 `;
 
 export const MarginedButton = styled(Button)`
-  margin-left: 20px;
+  margin-left: 1.25rem;
 `;
 
 export const Arrow = styled.i`

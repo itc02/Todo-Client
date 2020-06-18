@@ -4,7 +4,7 @@ import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 
 export const StyledFormControl = styled(FormControl)`
-  margin-top: 20px;
+  margin-top: 1.25rem;
 `;
 
 export const CapitalizedSelect = styled(Select)`
