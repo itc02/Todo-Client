@@ -12,7 +12,7 @@ import { Options, Title, Border, StyledTableCell, MarginedButton, Arrow } from '
 import { AddTodoDialog } from '../dialogs/addTodo/AddTodoDialog';
 import { AddUserDialog } from '../dialogs/addUser/AddUserDialog';
 import { ShowUsersDialog } from '../dialogs/showUsers/ShowUsersDialog';
-import { columns, sortingOrders, sortingCriterias, filterCriterias, pagination } from '../../utils/staticData/constants';
+import { columns, sortingOrders, sortingCriteria, filterCriteria, pagination } from '../../utils/staticData/constants';
 import { routes } from '../../utils/staticData/enums';
 import axios from 'axios';
 import moment from 'moment';
@@ -39,10 +39,10 @@ export const MainTable:React.FC = () => {
   const [ currentPage, setPage ] = useState<number>(pagination.defaultPage);
   const [ allTodosCount, setAllTodosCount ] = useState<number>(0);
 
-  const [ sortingCriteria, setSortingCriteria ] = useState<string>(sortingCriterias.defaultTodoCriteria);
+  const [ sortingCriterion, setSortingCriterion ] = useState<string>(sortingCriteria.defaultTodoCriterion);
   const [ order, setOrder ] = useState<string>(sortingOrders.defaultOrder);
   const [ searchString, setSearchString ] = useState<string>('');
-  const [ filterCriteria, setFilterCriteria ] = useState<string>(filterCriterias.defaultTodoCriteria);
+  const [ filterCriterion, setFilterCriterion ] = useState<string>(filterCriteria.defaultTodoCriterion);
 
   const getTodos = (newPer: number, newPage: number) => {
     axios.get(`${routes.server}/${routes.todos}`, {
@@ -50,9 +50,9 @@ export const MainTable:React.FC = () => {
         per: newPer,
         page: newPage,
         order,
-        sorting_criteria: sortingCriteria,
+        sorting_criterion: sortingCriterion,
         search_string: searchString,
-        filter_criteria: filterCriteria
+        filter_criterion: filterCriterion
       }
     }).then(res => {
       setTodos(res.data.todos);
@@ -98,14 +98,14 @@ export const MainTable:React.FC = () => {
     const { orders } = sortingOrders;
     const index = orders.indexOf(order)
     const newOrder = orders[index === orders.length - 1 ? 0 : index + 1];
-    const newCriteria = e.target.id;
-    setSortingCriteria(newCriteria);
+    const newCriterion = e.target.id;
+    setSortingCriterion(newCriterion);
     setOrder(newOrder);
   }
 
-  const filterTodos = (newSearchString: string, newSearchCriteria: string) => {
+  const filterTodos = (newSearchString: string, newSearchCriterion: string) => {
     setSearchString(newSearchString);
-    setFilterCriteria(newSearchCriteria);
+    setFilterCriterion(newSearchCriterion);
   }
 
   useEffect(() => {
@@ -120,8 +120,8 @@ export const MainTable:React.FC = () => {
         <Filtration 
           filterData={filterTodos}
           columns={columns.todos.slice(1)}
-          filterCriterias={filterCriterias.todos}
-          defaultFilterCriteria={'title'}
+          filterCriteria={filterCriteria.todos}
+          defaultFilterCriterion={'title'}
           defaultFilterLabel={'Title'}
         />
         <div>
@@ -148,7 +148,7 @@ export const MainTable:React.FC = () => {
                     <Arrow 
                       className={order ? `fa fa-arrow-${order === 'ASC' ? `up` : `down`}` : `fa fa-minus`} 
                       onClick={sortTodos} 
-                      id={sortingCriterias.todos[index - 1]}
+                      id={sortingCriteria.todos[index - 1]}
                     />
                   }
                   { column }
@@ -198,7 +198,7 @@ export const MainTable:React.FC = () => {
                 per={currentPer}
                 setPage={setPage}
                 setPer={setPer}
-                isSorted={Boolean(sortingCriteria)}
+                isSorted={Boolean(sortingCriterion)}
               />
             </TableCell>
           </TableRow>

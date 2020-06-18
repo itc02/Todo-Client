@@ -14,9 +14,9 @@ export const textFields = {
   }
 };
 
-export const sortingCriterias = {
+export const sortingCriteria = {
   todos: ['title', 'state', 'user_name', 'deadline'],
-  defaultTodoCriteria: 'title'
+  defaultTodoCriterion: 'title'
 };
 
 export const columns = {
@@ -24,11 +24,11 @@ export const columns = {
   users: ['', 'Name', 'Number of todos']
 };
 
-export const filterCriterias = {
+export const filterCriteria = {
   todos: ['title', 'state', 'user_name', 'deadline'],
   users: ['user_name'],
-  defaultTodoCriteria: 'title',
-  defaultUserCriteria: 'user_name'
+  defaultTodoCriterion: 'title',
+  defaultUserCriterion: 'user_name'
 };
 
 export const states = ['new', 'in progress', 'finished'];
