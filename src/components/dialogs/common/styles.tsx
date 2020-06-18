@@ -18,11 +18,11 @@ export const DialogTitle = styled(Title)`
 `;
 
 export const StyledActions = styled.div`
-  margin-top: 15px;
+  margin-top: 1rem;
   display: flex;
   justify-content: flex-end;
 `;
 
 export const StyledActionButton = styled(Button)`
-  margin-left: 10px;
+  margin-left: 0.625rem;
 `;
