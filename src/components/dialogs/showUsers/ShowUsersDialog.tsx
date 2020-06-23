@@ -7,7 +7,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TableFooter from '@material-ui/core/TableFooter';
 import Paper from '@material-ui/core/Paper';
-import { filterCriterias, columns, pagination } from '../../../utils/staticData/constants';
+import { filterCriteria, columns, pagination } from '../../../utils/staticData/constants';
 import { routes } from '../../../utils/staticData/enums';
 import { UsersData } from '../../../utils/interfaces/users';
 import CustomCheckbox from '../../checkbox/CustomCheckbox';
@@ -36,7 +36,7 @@ export const ShowUsersDialog:React.FC<Props> = ({ open, closeDialog }) => {
   const [ currentPage, setPage ] = useState<number>(pagination.defaultPage);
 
   const [ searchString, setSearchString ] = useState<string>('');
-  const [ filterCriteria, setFilterCriteria ] = useState<string>(filterCriterias.defaultUserCriteria);
+  const [ filterCriterion, setFilterCriterion ] = useState<string>(filterCriteria.defaultUserCriterion);
 
   const getUsers = (newPer: number, newPage: number) => {
     axios.get(`${routes.server}/${routes.users}`, {
@@ -44,7 +44,7 @@ export const ShowUsersDialog:React.FC<Props> = ({ open, closeDialog }) => {
         per: newPer,
         page: newPage,
         search_string: searchString,
-        search_criteria: filterCriteria
+        search_criterion: filterCriterion
       }
     }).then(res => {
       setUsers(res.data.users);
@@ -62,9 +62,9 @@ export const ShowUsersDialog:React.FC<Props> = ({ open, closeDialog }) => {
     });
   }
 
-  const filterUsers = (newSearchString: string, newSearchCriteria: string) => {
+  const filterUsers = (newSearchString: string, newSearchCriterion: string) => {
     setSearchString(newSearchString);
-    setFilterCriteria(newSearchCriteria);
+    setFilterCriterion(newSearchCriterion);
   }
 
   const close = () => {
@@ -92,8 +92,8 @@ export const ShowUsersDialog:React.FC<Props> = ({ open, closeDialog }) => {
       <Filtration
         filterData={filterUsers}
         columns={columns.users.slice(1, -1)}
-        filterCriterias={filterCriterias.users}
-        defaultFilterCriteria={'user_name'}
+        filterCriteria={filterCriteria.users}
+        defaultFilterCriterion={'user_name'}
         defaultFilterLabel={'Name'}
       />
       <TableContainer component={Paper}>
