@@ -67,10 +67,6 @@ export const ShowUsersDialog:React.FC<Props> = ({ open, closeDialog }) => {
     setFilterCriterion(newSearchCriterion);
   }
 
-  const close = () => {
-    closeDialog();
-  }
-
   const confirm = () => {
     deleteUsers();
   }
@@ -83,7 +79,7 @@ export const ShowUsersDialog:React.FC<Props> = ({ open, closeDialog }) => {
     <DialogStructure
       open={open}
       title='All users'
-      close={close}
+      close={closeDialog}
       isForm={false}
       action={'Delete'}
       confirm={confirm}

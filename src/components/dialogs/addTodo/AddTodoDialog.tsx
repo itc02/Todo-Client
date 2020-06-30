@@ -1,4 +1,4 @@
-import React, { useState, useEffect, ChangeEvent} from 'react';
+import React, { useState, useEffect } from 'react';
 import { UsersData } from '../../../utils/interfaces/users';
 import { textFields, states } from '../../../utils/staticData/constants';
 import { routes, labels } from '../../../utils/staticData/enums';
@@ -13,7 +13,7 @@ import DateFnsUtils from '@date-io/date-fns';
 import InputLabel from '@material-ui/core/InputLabel';
 import { DialogStructure } from '../common/DialogStructure';
 import DialogActions from '../common/DialogActions';
-import { Formik } from 'formik';
+import { Formik, FormikErrors, FormikTouched } from 'formik';
 import * as Yup from 'yup';
 
 interface Props {
@@ -37,13 +37,13 @@ interface FormData {
 
 export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog, createTodo, isEdit, editTodo, id }) => {
   const [ users, setUsers ] = useState<UsersData[]>([]);
-  const [ initialValues, setInitialValues ] = useState<FormData>({
+  const initialValues: FormData = {
     title: '',
     state: '',
     deadline: null,
     username: '',
     description: ''
-  });
+  };
 
   const NewTodoSchema = Yup.object().shape({
     title: Yup.string()
@@ -66,18 +66,6 @@ export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog, createTodo, i
       .required('State is required') : Yup.string()
   });
 
-  const confirm = (data: FormData) => {
-    const user = users.find(user => user.user_name === data.username);
-    if(!isEdit) {
-      const { title, deadline, username, description } = data
-      createTodo({ title, deadline, userId: user ? user.id : 0, description });
-    } else {
-      const { title, deadline, username, description, state } = data;
-      editTodo({ id, title, deadline, userId: user ? user.id : 0, description, state });
-    }
-    closeDialog();
-  }
-
   const usernames = () => {
     return users.map(user => user.user_name);
   }
@@ -87,30 +75,50 @@ export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog, createTodo, i
     return option && user ? user.user_name : '';
   }
   
-  const fill = () => {
+  const confirm = (data: FormData) => {
+    const user = users.find(user => user.user_name === data.username);
+    if(!isEdit) {
+      const { title, deadline, description } = data
+      createTodo({ title, deadline, userId: user ? user.id : 0, description });
+    } else {
+      const { title, deadline, description, state } = data;
+      editTodo({ id, title, deadline, userId: user ? user.id : 0, description, state });
+    }
+    closeDialog();
+  }
+
+  const fill = (setValues: (values: FormData) => void) => {
     axios.get(`${routes.server}/${routes.todos}`, {
       params: { id }
     }).then(res => {
       const { title, state, user_id, description, deadline } = res.data
       const user = users.find(user => user.id === user_id);
-      setInitialValues({
+      setValues({
         title,
-        state,
         deadline,
+        state,
         description,
         username: user ? user.user_name : ''
       });
     });
   }
 
-  const clear = () => {
-    setInitialValues({
-      title: '',
-      state: '',
-      deadline: null,
-      description: '',
-      username: ''
-    });
+  const clear = (
+    setValues: (values: FormData) => void,
+    setTouched: (touched: FormikTouched<FormData>) => void,
+    setErrors: (errors: FormikErrors<FormData>) => void,
+  ) => {
+    setValues(initialValues);
+    setTouched({})
+    setErrors({});
+  }
+
+  const isFill = (values: FormData) => {
+    return isEdit && open && Object.values(values).filter(value => !value).length === Object.keys(values).length;
+  }
+
+  const isClear = (values: FormData) => {
+    return !open && (Object.values(values).filter(value => value).length > 0);
   }
 
   useEffect(() => {
@@ -121,9 +129,7 @@ export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog, createTodo, i
     }).then(res => {
       setUsers(res.data);
     });
-    isEdit ? fill() : clear()
   }, [ open ]);
-
 
   return (
     <DialogStructure
@@ -138,8 +144,11 @@ export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog, createTodo, i
         validationSchema={NewTodoSchema}
         enableReinitialize={true}
       >
-        {({values, errors, touched, handleChange, handleSubmit, setFieldValue }) => (
+        {({values, errors, touched, handleChange, handleSubmit, setFieldValue, setErrors, setValues, setTouched}) => (
+          
           <form onSubmit={handleSubmit}>
+            {isClear(values) ? clear(setValues, setTouched, setErrors) : null}
+            {isFill(values) ? fill(setValues) : null}
             <StyledFormControl fullWidth>
               <TextField
                 name='title'
@@ -196,7 +205,7 @@ export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog, createTodo, i
               <Autocomplete
                 options={usernames()}
                 value={!values.username ? null : values.username}
-                onChange={(e: any, value: string | null) => setFieldValue('username', value || '')}
+                onChange={(_e: any, value: string | null) => setFieldValue('username', value || '')}
                 getOptionLabel={getOptionLabel}
                 renderInput={(params: any) => {
                   return (
@@ -232,6 +241,7 @@ export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog, createTodo, i
               action='Add'
               close={closeDialog}
               isForm={true}
+              isInvalid={Object.values(values).filter(value => value).length === 0}
             />
           </form>
         )}
