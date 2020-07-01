@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { TodosData } from '../../utils/interfaces/todos'
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -44,7 +44,7 @@ export const MainTable:React.FC = () => {
   const [ searchString, setSearchString ] = useState<string>('');
   const [ filterCriterion, setFilterCriterion ] = useState<string>(filterCriteria.defaultTodoCriterion);
 
-  const getTodos = (newPer: number, newPage: number) => {
+  const getTodos = useCallback((newPer: number, newPage: number) => {
     axios.get(`${routes.server}/${routes.todos}`, {
       params: {
         per: newPer,
@@ -58,7 +58,7 @@ export const MainTable:React.FC = () => {
       setTodos(res.data.todos);
       setAllTodosCount(res.data.total_record_count);
     });
-  }
+  }, [filterCriterion, order, searchString, sortingCriterion]);
 
   const createTodo = ({title, deadline, userId, description}: any) => {
     axios.post(`${routes.server}/${routes.todos}`, {
@@ -66,7 +66,7 @@ export const MainTable:React.FC = () => {
       deadline,
       user_id: userId,
       description,
-    }).then(res => {
+    }).then(_res => {
       getTodos(currentPer, currentPage);
     });
   }
@@ -78,7 +78,7 @@ export const MainTable:React.FC = () => {
       user_id: userId,
       description,
       state
-    }).then(res => {
+    }).then(_res => {
       getTodos(currentPer, currentPage);
     })
   }
@@ -110,7 +110,7 @@ export const MainTable:React.FC = () => {
 
   useEffect(() => {
     getTodos(currentPer, currentPage);
-  }, [ currentPage, currentPer, order, searchString ]);
+  }, [ currentPage, currentPer, order, searchString, getTodos ]);
 
   return (
     <div style={{backgroundColor: '#ececec', height: '100%'}}>
