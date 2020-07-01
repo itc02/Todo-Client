@@ -49,11 +49,9 @@ export const AddUserDialog:React.FC<Props> = ({ open, closeDialog }) => {
   const clear = (
     setValues: (values: FormData) => void,
     setTouched: (touched: FormikTouched<FormData>) => void,
-    setErrors: (errors: FormikErrors<FormData>) => void,
   ) => {
     setValues(initialValues);
-    setTouched({})
-    setErrors({});
+    setTouched({});
   }
 
   const isClear = (values: any) => {
@@ -82,9 +80,9 @@ export const AddUserDialog:React.FC<Props> = ({ open, closeDialog }) => {
         onSubmit={confirm}
         validationSchema={NewUserSchema}
       >
-        {({values, errors, touched, handleChange, handleSubmit, setValues, setTouched, setErrors }) => (
+        {({values, errors, touched, handleChange, handleSubmit, setValues, setTouched }) => (
           <form onSubmit={handleSubmit}>
-            {isClear(values) ? clear(setValues, setTouched, setErrors) : null}
+            {isClear(values) ? clear(setValues, setTouched) : null}
             <StyledFormControl fullWidth>
               <TextField
                 type='text'
@@ -102,7 +100,6 @@ export const AddUserDialog:React.FC<Props> = ({ open, closeDialog }) => {
             
             <StyledFormControl fullWidth>
               <TextField
-                type='email'
                 name='email'
                 value={values.email}
                 label={labels.email}

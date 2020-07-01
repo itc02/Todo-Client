@@ -106,11 +106,9 @@ export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog, createTodo, i
   const clear = (
     setValues: (values: FormData) => void,
     setTouched: (touched: FormikTouched<FormData>) => void,
-    setErrors: (errors: FormikErrors<FormData>) => void,
   ) => {
     setValues(initialValues);
-    setTouched({})
-    setErrors({});
+    setTouched({});
   }
 
   const isFill = (values: FormData) => {
@@ -144,10 +142,10 @@ export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog, createTodo, i
         validationSchema={NewTodoSchema}
         enableReinitialize={true}
       >
-        {({values, errors, touched, handleChange, handleSubmit, setFieldValue, setErrors, setValues, setTouched}) => (
+        {({values, errors, touched, handleChange, handleSubmit, setFieldValue, setValues, setTouched}) => (
           
           <form onSubmit={handleSubmit}>
-            {isClear(values) ? clear(setValues, setTouched, setErrors) : null}
+            {isClear(values) ? clear(setValues, setTouched) : null}
             {isFill(values) ? fill(setValues) : null}
             <StyledFormControl fullWidth>
               <TextField
