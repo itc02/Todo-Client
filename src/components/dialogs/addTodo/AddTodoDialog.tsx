@@ -13,7 +13,7 @@ import DateFnsUtils from '@date-io/date-fns';
 import InputLabel from '@material-ui/core/InputLabel';
 import { DialogStructure } from '../common/DialogStructure';
 import DialogActions from '../common/DialogActions';
-import { Formik, FormikErrors, FormikTouched } from 'formik';
+import { Formik, FormikTouched } from 'formik';
 import * as Yup from 'yup';
 
 interface Props {
@@ -236,7 +236,7 @@ export const AddTodoDialog:React.FC<Props> = ({ open, closeDialog, createTodo, i
             </StyledFormControl>
 
             <DialogActions 
-              action='Add'
+              action={isEdit ? 'Edit' : 'Add'}
               close={closeDialog}
               isForm={true}
               isInvalid={Object.values(values).filter(value => value).length === 0}

@@ -6,7 +6,7 @@ import { textFields } from '../../../utils/staticData/constants';
 import { routes, labels } from '../../../utils/staticData/enums';
 import { DialogStructure } from '../common/DialogStructure';
 import axios from 'axios';
-import { Formik, FormikTouched, FormikErrors } from 'formik';
+import { Formik, FormikTouched } from 'formik';
 import DialogActions from '../common/DialogActions';
 import * as Yup from 'yup';
 
