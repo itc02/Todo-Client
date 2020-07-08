@@ -8,17 +8,18 @@ import { ActionTypes } from '../../utils/globalState/actions';
 interface Props {
   setAllAction: ActionTypes.SET_ALL_TODOS | ActionTypes.SET_ALL_USERS;
   clearAllAction: ActionTypes.CLEAR_TODOS | ActionTypes.CLEAR_USERS;
+  allItemsCount: number;
   route: string;
 }
 
-const MainCheckbox:React.FC<Props> = ({ setAllAction, clearAllAction, route  }) => {
+const MainCheckbox:React.FC<Props> = ({ setAllAction, clearAllAction, allItemsCount, route  }) => {
   const { dispatch } = useGlobalState();
   const [ itemsId, setItemsId ] = useState<number[]>([]);
   const [ isSetAll, setIsSetAll ] = useState<boolean>(true);
 
   const setAll = () => {
     if(isSetAll) {
-      dispatch({ type: setAllAction, arrayOfIds: itemsId });
+      dispatch({ type: setAllAction, arrayOfIds: itemsId});
     } else {
       dispatch({ type: clearAllAction });
     }
@@ -33,7 +34,7 @@ const MainCheckbox:React.FC<Props> = ({ setAllAction, clearAllAction, route  }) 
     }).then(res => {
       setItemsId(res.data);
     });
-  }, [route, isSetAll]);
+  }, [route, isSetAll, allItemsCount]);
 
   return(
     <Checkbox 

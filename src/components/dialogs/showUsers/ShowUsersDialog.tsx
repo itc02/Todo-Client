@@ -26,7 +26,7 @@ interface Props {
 
 export const ShowUsersDialog:React.FC<Props> = ({ open, closeDialog }) => {
   const { state, dispatch } = useGlobalState();
-  const { selectedUsers } = state;
+  const { selectedUsers, isAllUsersSelected } = state;
 
   const [ users, setUsers ] = useState<UsersData[]>([]);
   const [ todosNumber, setTodosNumber ] = useState<number[]>([]);
@@ -101,6 +101,7 @@ export const ShowUsersDialog:React.FC<Props> = ({ open, closeDialog }) => {
                         setAllAction={ActionTypes.SET_ALL_USERS}
                         clearAllAction={ActionTypes.CLEAR_USERS}
                         route={routes.users}
+                        allItemsCount={selectedUsers.length}
                         key='mainCheckbox'
                       /> 
                     }
@@ -120,6 +121,7 @@ export const ShowUsersDialog:React.FC<Props> = ({ open, closeDialog }) => {
                       removeAction={ActionTypes.REMOVE_USER}
                       addAction={ActionTypes.ADD_USER}
                       selectedItems={selectedUsers}
+                      isAllItemsSelected={isAllUsersSelected}
                     />
                   </TableCell>
                   <TableCell>{user.user_name}</TableCell>
