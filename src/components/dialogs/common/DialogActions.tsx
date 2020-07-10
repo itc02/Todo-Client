@@ -1,6 +1,5 @@
 import React from 'react';
 import { StyledActions, StyledActionButton } from './styles';
-import Button from '@material-ui/core/Button';
 
 interface Props {
   close: () => void;

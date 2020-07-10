@@ -24,7 +24,7 @@ const MainCheckbox:React.FC<Props> = ({ setAllAction, clearAllAction, route  }) 
     }
     setIsSetAll(!isSetAll);
   }
-
+  
   useEffect(() => {
     axios.get(`${routes.server}/${route}`, {
       params: {
@@ -33,7 +33,7 @@ const MainCheckbox:React.FC<Props> = ({ setAllAction, clearAllAction, route  }) 
     }).then(res => {
       setItemsId(res.data);
     });
-  }, []);
+  }, [route, isSetAll]);
 
   return(
     <Checkbox 

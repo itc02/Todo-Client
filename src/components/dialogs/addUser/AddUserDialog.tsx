@@ -4,10 +4,9 @@ import { StyledFormControl } from '../addTodo/styles';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import { textFields } from '../../../utils/staticData/constants';
 import { routes, labels } from '../../../utils/staticData/enums';
-import { UsersData } from '../../../utils/interfaces/users';
 import { DialogStructure } from '../common/DialogStructure';
 import axios from 'axios';
-import { Formik } from 'formik';
+import { Formik, FormikTouched } from 'formik';
 import DialogActions from '../common/DialogActions';
 import * as Yup from 'yup';
 
@@ -23,6 +22,10 @@ interface FormData {
 
 export const AddUserDialog:React.FC<Props> = ({ open, closeDialog }) => {
   const [ users, setUsers ] = useState<string[]>([]);
+  const initialValues: FormData = {
+    name: '',
+    email: ''
+  };
 
   const NewUserSchema = Yup.object().shape({
     name: Yup.string()
@@ -40,6 +43,19 @@ export const AddUserDialog:React.FC<Props> = ({ open, closeDialog }) => {
       user_name: data.name,
       email: data.email
     });
+    closeDialog();
+  }
+
+  const clear = (
+    setValues: (values: FormData) => void,
+    setTouched: (touched: FormikTouched<FormData>) => void,
+  ) => {
+    setValues(initialValues);
+    setTouched({});
+  }
+
+  const isClear = (values: any) => {
+    return Object.values(values).filter(value => value).length > 0 && !open;
   }
 
   useEffect(() => {
@@ -60,12 +76,13 @@ export const AddUserDialog:React.FC<Props> = ({ open, closeDialog }) => {
       isForm={true}
     >
       <Formik
-        initialValues={{name: '', email: ''}}
+        initialValues={initialValues}
         onSubmit={confirm}
         validationSchema={NewUserSchema}
       >
-        {({values, errors, touched, handleChange, handleSubmit }) => (
+        {({values, errors, touched, handleChange, handleSubmit, setValues, setTouched }) => (
           <form onSubmit={handleSubmit}>
+            {isClear(values) ? clear(setValues, setTouched) : null}
             <StyledFormControl fullWidth>
               <TextField
                 type='text'
@@ -83,7 +100,6 @@ export const AddUserDialog:React.FC<Props> = ({ open, closeDialog }) => {
             
             <StyledFormControl fullWidth>
               <TextField
-                type='email'
                 name='email'
                 value={values.email}
                 label={labels.email}
@@ -98,6 +114,7 @@ export const AddUserDialog:React.FC<Props> = ({ open, closeDialog }) => {
               close={closeDialog}
               action='Add'
               isForm={true}
+              isInvalid={Object.values(values).filter(value => value).length === 0}
             />
           </form>
         )}

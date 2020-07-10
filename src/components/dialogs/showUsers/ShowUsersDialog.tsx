@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -38,20 +38,20 @@ export const ShowUsersDialog:React.FC<Props> = ({ open, closeDialog }) => {
   const [ searchString, setSearchString ] = useState<string>('');
   const [ filterCriterion, setFilterCriterion ] = useState<string>(filterCriteria.defaultUserCriterion);
 
-  const getUsers = (newPer: number, newPage: number) => {
+  const getUsers = useCallback((newPer: number, newPage: number) => {
     axios.get(`${routes.server}/${routes.users}`, {
       params: {
         per: newPer,
         page: newPage,
         search_string: searchString,
-        search_criterion: filterCriterion
+        filter_criterion: filterCriterion
       }
     }).then(res => {
       setUsers(res.data.users);
       setTodosNumber(res.data.todos_number);
       setAllUsersCount(res.data.total_record_count);
     });
-  }
+  }, [filterCriterion, searchString]);
 
   const deleteUsers = () => {
     axios.delete(`${routes.server}/${routes.users}`, { data: {
@@ -67,26 +67,18 @@ export const ShowUsersDialog:React.FC<Props> = ({ open, closeDialog }) => {
     setFilterCriterion(newSearchCriterion);
   }
 
-  const close = () => {
-    closeDialog();
-  }
-
-  const confirm = () => {
-    deleteUsers();
-  }
-
   useEffect(() => {
     getUsers(currentPer, currentPage);
-  }, [ open, searchString ]);
+  }, [ open, searchString, currentPage, currentPer, getUsers ]);
 
   return(
     <DialogStructure
       open={open}
       title='All users'
-      close={close}
+      close={closeDialog}
       isForm={false}
       action={'Delete'}
-      confirm={confirm}
+      confirm={deleteUsers}
       isInvalid={!selectedUsers.length}
     >
       <Filtration
@@ -109,7 +101,7 @@ export const ShowUsersDialog:React.FC<Props> = ({ open, closeDialog }) => {
                         setAllAction={ActionTypes.SET_ALL_USERS}
                         clearAllAction={ActionTypes.CLEAR_USERS}
                         route={routes.users}
-                        key={'aaa'}
+                        key='mainCheckbox'
                       /> 
                     }
                   </TableCell>
@@ -131,6 +123,7 @@ export const ShowUsersDialog:React.FC<Props> = ({ open, closeDialog }) => {
                     />
                   </TableCell>
                   <TableCell>{user.user_name}</TableCell>
+                  <TableCell>{user.email}</TableCell>
                   <TableCell>{todosNumber[index]}</TableCell>
                 </TableRow>
               )
@@ -138,7 +131,7 @@ export const ShowUsersDialog:React.FC<Props> = ({ open, closeDialog }) => {
           </TableBody>
           <TableFooter>
             <TableRow>
-              <TableCell colSpan={3}>
+              <TableCell colSpan={4}>
                 <Pagination
                   items={users}
                   getItems={getUsers}
