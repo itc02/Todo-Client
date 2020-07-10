@@ -21,12 +21,12 @@ export const sortingCriteria = {
 
 export const columns = {
   todos: ['', 'Title', 'State', 'Assigned to', 'End date'],
-  users: ['', 'Name', 'Number of todos']
+  users: ['', 'Name', 'Email', 'Assigned todos number']
 };
 
 export const filterCriteria = {
   todos: ['title', 'state', 'user_name', 'deadline'],
-  users: ['user_name'],
+  users: ['user_name', 'email'],
   defaultTodoCriterion: 'title',
   defaultUserCriterion: 'user_name'
 };

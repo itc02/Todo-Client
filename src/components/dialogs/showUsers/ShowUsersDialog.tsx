@@ -44,7 +44,7 @@ export const ShowUsersDialog:React.FC<Props> = ({ open, closeDialog }) => {
         per: newPer,
         page: newPage,
         search_string: searchString,
-        search_criterion: filterCriterion
+        filter_criterion: filterCriterion
       }
     }).then(res => {
       setUsers(res.data.users);
@@ -101,7 +101,7 @@ export const ShowUsersDialog:React.FC<Props> = ({ open, closeDialog }) => {
                         setAllAction={ActionTypes.SET_ALL_USERS}
                         clearAllAction={ActionTypes.CLEAR_USERS}
                         route={routes.users}
-                        key={'aaa'}
+                        key='mainCheckbox'
                       /> 
                     }
                   </TableCell>
@@ -123,6 +123,7 @@ export const ShowUsersDialog:React.FC<Props> = ({ open, closeDialog }) => {
                     />
                   </TableCell>
                   <TableCell>{user.user_name}</TableCell>
+                  <TableCell>{user.email}</TableCell>
                   <TableCell>{todosNumber[index]}</TableCell>
                 </TableRow>
               )
@@ -130,7 +131,7 @@ export const ShowUsersDialog:React.FC<Props> = ({ open, closeDialog }) => {
           </TableBody>
           <TableFooter>
             <TableRow>
-              <TableCell colSpan={3}>
+              <TableCell colSpan={4}>
                 <Pagination
                   items={users}
                   getItems={getUsers}
