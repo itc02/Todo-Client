@@ -7,46 +7,50 @@ const reducer = (state: StateType, action: Actions): StateType => {
   switch(action.type) {
     case ActionTypes.ADD_TODO:
       return {
+        ...state,
         selectedTodos: [ ...selectedTodos, action.id],
-        selectedUsers
       };
     case ActionTypes.ADD_USER:
       return {
-        selectedTodos,
+        ...state,
         selectedUsers: [ ...selectedUsers, action.id]
       };
     case ActionTypes.REMOVE_TODO:
       return {
+        ...state,
         selectedTodos: selectedTodos.filter((item: number) => item !== action.id),
-        selectedUsers
       };
     case ActionTypes.REMOVE_USER:
       return {
-        selectedTodos,
+        ...state,
         selectedUsers: selectedUsers.filter((item: number) => item !== action.id)
       };
     case ActionTypes.CLEAR_TODOS:
       return {
+        ...state,
         selectedTodos: [],
-        selectedUsers
+        isAllTodosSelected: false
       }
     case ActionTypes.CLEAR_USERS:
       return {
-        selectedTodos,
-        selectedUsers: []
+        ...state,
+        selectedUsers: [],
+        isAllUsersSelected: false
       }
     case ActionTypes.SET_ALL_TODOS:
       return {
+        ...state,
         selectedTodos: action.arrayOfIds,
-        selectedUsers
+        isAllTodosSelected: true
       }
     case ActionTypes.SET_ALL_USERS:
       return {
-        selectedTodos,
-        selectedUsers: action.arrayOfIds
+        ...state,
+        selectedUsers: action.arrayOfIds,
+        isAllUsersSelected: true
       }
     default:
-      throw new Error('Unknown action: ' + action);
+      throw new Error(`Unknown action: ${action}`);
   }
 }
 

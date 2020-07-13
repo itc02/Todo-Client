@@ -26,7 +26,7 @@ import { DeleteItems } from '../dialogs/deleteItems/DeleteItems';
 
 export const MainTable:React.FC = () => {
   const { state, dispatch } = useGlobalState();
-  const { selectedTodos } = state;
+  const { selectedTodos, isAllTodosSelected } = state;
 
   const [ openAddDialog, setOpenAddDialog ] = useState<boolean>(false);
   const [ openAddUserDialog, setOpenAddUserDialog ] = useState<boolean>(false);
@@ -141,6 +141,7 @@ export const MainTable:React.FC = () => {
                     <MainCheckbox 
                       setAllAction={ActionTypes.SET_ALL_TODOS}
                       clearAllAction={ActionTypes.CLEAR_TODOS}
+                      allItemsCount={todos.length}
                       route={routes.todos}
                     />
                   }
@@ -167,6 +168,7 @@ export const MainTable:React.FC = () => {
                     removeAction={ActionTypes.REMOVE_TODO}
                     addAction={ActionTypes.ADD_TODO}
                     selectedItems={selectedTodos}
+                    isAllItemsSelected={isAllTodosSelected}
                   />
                 </TableCell>
                 <TableCell>{ todo.title }</TableCell>
