@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StyledPagination } from './styles';
 import Select from '@material-ui/core/Select';
 import Pagination from '@material-ui/lab/Pagination';
@@ -17,7 +17,6 @@ interface Props {
 }
 
 const TodoPagination:React.FC<Props> = ({items, getItems, allItemsCount, per, page, setPage, setPer, isSorted}) => {
-
   const handlePerChange = (event: any) => {
     const newPer = parseInt(event.target.value);
     setPer(newPer);
@@ -26,7 +25,7 @@ const TodoPagination:React.FC<Props> = ({items, getItems, allItemsCount, per, pa
     }
   }
 
-  const handlePageChange = (event: any, newPage: any) => {
+  const handlePageChange = (_event: any, newPage: any) => {
     setPage(newPage);
     if(!isSorted) {
       getItems(per, newPage);
@@ -37,15 +36,21 @@ const TodoPagination:React.FC<Props> = ({items, getItems, allItemsCount, per, pa
     return items.length === 0 ? 1 : Math.ceil(allItemsCount / per);
   }
 
+  useEffect(() => {
+    if(pagesCount() < page) {
+      setPage(pagesCount());
+    }
+  });
+
   return (
     <StyledPagination>
       <Select
         value={per}
         onChange={handlePerChange}
       >
-        { pagination.rowsOnPage.map(pageNumber => <MenuItem key={pageNumber} value={pageNumber}>{pageNumber}</MenuItem> ) }
+        { pagination.rowsOnPage.map(pageNumber => <MenuItem key={pageNumber} value={pageNumber}>{pageNumber}</MenuItem>) }
       </Select>
-      <Pagination onChange={handlePageChange} count={pagesCount()} page={page} color='primary'/>
+      <Pagination onChange={handlePageChange} count={pagesCount()} page={page || 1} color='primary'/>
     </StyledPagination>
   );
 }
